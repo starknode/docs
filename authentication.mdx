@@ -31,7 +31,7 @@ StarkFi API uses API keys to authenticate requests. All endpoints require authen
 
 Include your API key in the `x-api-key` header with every request:
 
-<RequestExample>
+<CodeGroup>
 
 ```javascript Typescript/Javascript
 import axios from 'axios'
@@ -129,8 +129,61 @@ curl_close($ch);
 var_dump($response);
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <Note>
   Store your API key in a secure server-side environment variable (e.g. `STARKFI_API_KEY`). Do not expose it in frontend code or commit it to git.
 </Note>
+
+### Common API Response Errors
+
+<AccordionGroup>
+  <Accordion title="Rate Limits">
+    ### Rate Limits
+
+    API keys are subject to rate limits to ensure fair usage:
+
+    <Card title="Rate limits" icon="timer">
+      - **600 requests per minute** per API key
+      - **Unlimited** number of requests **per month**.
+    </Card>
+
+    ### **Handling Rate Limits**
+
+    When you exceed the rate limit, you’ll receive a`429 Too Many Requests`response:
+
+    ```json
+    {
+      "code": 429,
+      "message": "Too many requests. The limit is 600 request per minute and 10 requests per second.",
+      "docs": "https://docs.starkfi.io/"
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Unauthorized or API Key Invalid">
+    #### Unauthorized or API Key Invalid
+
+    Your request was rejected by the server. This error can have multiple causes:
+
+    1. Invalid or expired API Key
+
+    The API key provided may be incorrect, expired, or has been revoked. Please verify your key is active in the dashboard.
+
+    2. Wrong header format
+
+    The API key must be sent in the request header exactly as:
+
+      x-api-key: YOUR\_KEY
+
+    Any variation (e.g. Authorization, api\_key, X-API-Key) will result in this error.
+
+    ```json
+    {
+      "code": 403,
+      "message": "Access denied. A valid API Key is required.",
+      "docs": "https://docs.starkfi.io/"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
