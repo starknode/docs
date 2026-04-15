@@ -1,0 +1,136 @@
+---
+title: "Authentication"
+description: "Learn how to authenticate with the StarkFi API"
+---
+
+StarkFi API uses API keys to authenticate requests. All endpoints require authentication via API key in the `x-api-key` header. Your API keys carry many privileges, so be sure to keep them secure!
+
+## Getting an API Key
+
+<Steps>
+  <Step title="Sign up for StarkFi">
+    Create an account at [starkfi.io](https://starkfi.io)
+
+    <Info>
+      KYC verification is required for on-ramp and fiat payment methods.
+    </Info>
+  </Step>
+  <Step title="Navigate to Dashboard Account">
+    In your dashboard account ......
+  </Step>
+  <Step title="Copy and Storage " iconType="duotone">
+    Copy your API key immediately - you won’t be able to see it again!
+
+    <Warning>
+      **Keep your API keys secure!** Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, etc.
+    </Warning>
+  </Step>
+</Steps>
+
+### Using your API Key
+
+Include your API key in the `x-api-key` header with every request:
+
+<RequestExample>
+
+```javascript Typescript/Javascript
+import axios from 'axios'
+
+const starkfi = axios.create({
+  baseURL: 'https://api.starkfi.io',
+  headers: {
+    'x-api-key': process.env.STARKFI_API_KEY
+  }
+})
+
+// Make authenticated request
+const response = await starkfi.get('/payment/:id/status')
+console.log(response.data)
+```
+
+```python Python
+import os
+import requests
+
+session = requests.Session()
+session.headers.update({
+    'x-api-key': os.environ['STARKFI_API_KEY']
+})
+
+# Make authenticated request
+response = session.get('https://api.starkfi.io/strategies')
+data = response.json()
+print(data)
+```
+
+```go Go
+package main
+
+import (
+  "fmt"
+  "net/http"
+  "os"
+)
+
+func main() {
+  client := &http.Client{}
+  req, _ := http.NewRequest("GET", "https://api.starkfi.io/strategies", nil)
+
+  // Set API key header
+  req.Header.Set("x-api-key", os.Getenv("STARKFI_API_KEY"))
+
+  resp, _ := client.Do(req)
+  defer resp.Body.Close()
+  fmt.Println(resp.Status)
+}
+```
+
+```rust Rust
+use reqwest::Client;
+use std::env;
+
+#[tokio::main]
+async fn main() -> Result<(), reqwest::Error> {
+    let api_key = env::var("STARKFI_API_KEY")
+        .expect("STARKFI_API_KEY not set");
+
+    let client = Client::new();
+
+    // Make authenticated request
+    let response = client
+        .get("https://api.starkfi.io/strategies")
+        .header("x-api-key", api_key)
+        .send().await?
+        .json::<serde_json::Value>().await?;
+
+    println!("{:?}", response);
+    Ok(())
+}
+```
+
+```php PHP
+<?php
+
+$apiKey = $_ENV['STARKFI_API_KEY'];
+
+$ch = curl_init('https://api.starkfi.io/strategies');
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER     => [
+        'x-api-key: ' . $apiKey,
+        'Content-Type: application/json'
+    ]
+]);
+
+// Make authenticated request
+$response = json_decode(curl_exec($ch), true);
+curl_close($ch);
+
+var_dump($response);
+```
+
+</RequestExample>
+
+<Note>
+  Store your API key in a secure server-side environment variable (e.g. `STARKFI_API_KEY`). Do not expose it in frontend code or commit it to git.
+</Note>
