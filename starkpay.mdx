@@ -1,0 +1,411 @@
+---
+title: "Check payment Info"
+description: "Learn about our endpoints to retrieve information about one or multiple payments."
+---
+
+<Info>
+  The data structure may vary depending on the transaction type. Do not rely on a fixed schema; always validate the returned type and its data for each transaction.
+</Info>
+
+## Getting Transaction details
+
+```shellscript
+GET https://api.starkfi.io/payment/:id/status
+```
+
+<Steps>
+  <Step title="Getting crypto payment details">
+    ```json expandable
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "payment_found",
+        "message": "Payment found.",
+        "data": {
+            "id": "cmodi78b2000101pjezst1ics",
+            "status": "error",
+            "executor_id": "api_transaction",
+            "order_code": null,
+            "tenant_data": {
+                "country": "brazil",
+                "pix_enabled": true,
+                "webhook_url": "https://webhook.site/9abdc6ad-4956-4d8c-b4d5-06eaffa30bce",
+                "public_client_id": "cmngy66mw0000e6y0uowcbxgf",
+                "bank_account_enabled": true,
+                "payment_method_allowed": {
+                    "crypto": true,
+                    "cardfiat": true,
+                    "pixcrypto": true,
+                    "cardcrypto": true
+                }
+            },
+            "payer_email": "dev.caiqueberingui@gmail.com",
+            "payer_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+            "payer_token_symbol": "USDT",
+            "transaction_type": "crypto",
+            "payer_cpf": null,
+            "tid_hash": null,
+            "split_payment_config": [
+                {
+                    "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+                    "receiver_percent": 100
+                }
+            ],
+            "global_payment_data": {
+                "message": "This details is available only for fiat payments"
+            },
+            "from_currency_symbol": "BRL",
+            "amount_from": "30",
+            "amount_to": "0.05994485073732166",
+            "to_currency_symbol": "USDT",
+            "chain_name": "arbitrum",
+            "from_chain": "arbitrum",
+            "to_chain": "arbitrum",
+            "on_ramp": false,
+            "unsigned_tx": {
+                "meta": {
+                    "source": "evm_split"
+                },
+                "family": "evm",
+                "chain_name": "arbitrum",
+                "schema_version": 1,
+                "transactionRequest": {
+                    "to": "0x23183C87c9c6668edf5974893905AF475c3664c9",
+                    "data": "0x40180def000000000000000000000000fd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb90000000000000000000000009b57847b69d0354837f7b723133b9dbcbefb4f9f000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000020000000000000000000000009b57847b69d0354837f7b723133b9dbcbefb4f9f0000000000000000000000001e659faad0181ab1a30891d99f69df115db77eef0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000e3220000000000000000000000000000000000000000000000000000000000000706",
+                    "from": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+                    "nonce": 36,
+                    "value": 0,
+                    "chainId": 42161,
+                    "gasLimit": "82499",
+                    "maxFeePerGas": "52514800",
+                    "maxPriorityFeePerGas": "0"
+                }
+            },
+            "signed_tx": null,
+            "data_error": {
+                "code": "invalid_payment_status",
+                "status": "error",
+                "details": null,
+                "message": "Payment transaction is not in a valid status for execution"
+            },
+            "session_payment": "https://lab-app.starknode.io/sessions/payment?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtb2RpNzhiMjAwMDEwMXBqZXpzdDFpY3MiLCJleGVjdXRvcl9pZCI6ImFwaV90cmFuc2FjdGlvbiIsIm9yZGVyX2NvZGUiOm51bGwsInRlbmFudF9kYXRhIjp7ImNvdW50cnkiOiJicmF6aWwiLCJwaXhfZW5hYmxlZCI6dHJ1ZSwid2ViaG9va191cmwiOiJodHRwczovL3dlYmhvb2suc2l0ZS85YWJkYzZhZC00OTU2LTRkOGMtYjRkNS0wNmVhZmZhMzBiY2UiLCJwdWJsaWNfY2xpZW50X2lkIjoiY21uZ3k2Nm13MDAwMGU2eTB1b3djYnhnZiIsImJhbmtfYWNjb3VudF9lbmFibGVkIjp0cnVlLCJwYXltZW50X21ldGhvZF9hbGxvd2VkIjp7ImNyeXB0byI6dHJ1ZSwiY2FyZGZpYXQiOnRydWUsInBpeGNyeXB0byI6dHJ1ZSwiY2FyZGNyeXB0byI6dHJ1ZX19LCJzdGF0dXMiOiJjcmVhdGluZ190cmFuc2FjdGlvbiIsInBheWVyX2VtYWlsIjoiZGV2LmNhaXF1ZWJlcmluZ3VpQGdtYWlsLmNvbSIsInBheWVyX3dhbGxldCI6IjB4OWI1Nzg0N2I2OUQwMzU0ODM3RjdiNzIzMTMzQjlkQkNiZWZiNEY5RiIsInBheWVyX3Rva2VuX3N5bWJvbCI6IlVTRFQiLCJ0cmFuc2FjdGlvbl90eXBlIjoiY3J5cHRvIiwicGF5ZXJfY3BmIjoiIiwidGlkX2hhc2giOm51bGwsIm1ldGFkYXRhIjpudWxsLCJzcGxpdF9wYXltZW50X2NvbmZpZyI6W3sicmVjZWl2ZXJfd2FsbGV0IjoiMHg5YjU3ODQ3YjY5RDAzNTQ4MzdGN2I3MjMxMzNCOWRCQ2JlZmI0RjlGIiwicmVjZWl2ZXJfcGVyY2VudCI6MTAwfV0sInN1YnNjcmlwdGlvbl9wYXltZW50X2NvbmZpZyI6bnVsbCwiZnJvbV9jdXJyZW5jeV9zeW1ib2wiOiJCUkwiLCJhbW91bnRfZnJvbSI6IjMwIiwiYW1vdW50X3RvIjoiMC4wNTk5NDQ4NTA3MzczMjE2NiIsIm5ldF9hbW91bnQiOnsibmV0X2Ftb3VudCI6MC4wNTg3NDU5NTM3MjI1NzUyMywiY29uc3VtZWRfZmVlIjoyfSwidG9fY3VycmVuY3lfc3ltYm9sIjoiVVNEVCIsImNoYWluX25hbWUiOiJhcmJpdHJ1bSIsImZyb21fY2hhaW4iOiJhcmJpdHJ1bSIsInRvX2NoYWluIjoiYXJiaXRydW0iLCJvbl9yYW1wIjpmYWxzZSwidW5zaWduZWRfdHgiOm51bGwsInNpZ25lZF90eCI6bnVsbCwiZ2xvYmFsX3BheW1lbnRfZGF0YSI6bnVsbCwiZGF0YV9lcnJvciI6eyJjb2RlIjoiaW52YWxpZF90cmFuc2FjdGlvbiIsInN0YXR1cyI6ImVycm9yIiwiZGV0YWlscyI6IkVycm9yOiBHYXMgZXN0aW1hdGlvbiBmYWlsZWQuIFRoZSB0cmFuc2FjdGlvbiB3b3VsZCByZXZlcnQgb24tY2hhaW4uIENhdXNlOiBleGVjdXRpb24gcmV2ZXJ0ZWQgUmV2ZXJ0IGRhdGE6IDB4OTRlNjgwOGEwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBmZDA4NmJjN2NkNWM0ODFkY2M5Yzg1ZWJlNDc4YTFjMGI2OWZjYmI5MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwYzk3NGE3NThjZTdjNGRkNTdhOWJlMWYwZTA0ZDA5ZjljODViZWI3YjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDliNTc4NDdiNjlkMDM1NDgzN2Y3YjcyMzEzM2I5ZGJjYmVmYjRmOWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMzIyIENvbnRyYWN0IGVycm9yOiBFUkMyMFRyYW5zZmVyRmFpbGVkLiBMaWtlbHkgY2F1c2VzOiBpbnN1ZmZpY2llbnQgdG9rZW4gYmFsYW5jZSBvciBpbnN1ZmZpY2llbnQgYWxsb3dhbmNlIGZvciB0aGUgZ2F0ZXdheSBjb250cmFjdC5cbiAgICBhdCBFVk1JbnRlcm5hbE1ldGhvZHMuR2VuZXJhdGVUeCAoL1VzZXJzL2NhaXF1ZS9kZXZlbG9wL1N0YXJrTm9kZS1TZXJ2ZXIvc3JjL2NsYXNzL0VWTUludGVybmFsTWV0aG9kcy5qczo4MDk6MjkpXG4gICAgYXQgcHJvY2Vzcy5wcm9jZXNzVGlja3NBbmRSZWplY3Rpb25zIChub2RlOmludGVybmFsL3Byb2Nlc3MvdGFza19xdWV1ZXM6MTA1OjUpXG4gICAgYXQgYXN5bmMgUGF5bWVudE1ldGhvZHMuX2J1aWxkVHJhbnNmZXJUeCAoL1VzZXJzL2NhaXF1ZS9kZXZlbG9wL1N0YXJrTm9kZS1TZXJ2ZXIvc3JjL2NsYXNzL1BheW1lbnRNZXRob2RzLmpzOjExNzQ6MjQpXG4gICAgYXQgYXN5bmMgYnVpbGRUcmFuc2FjdGlvbnNCeVR5cGUgKC9Vc2Vycy9jYWlxdWUvZGV2ZWxvcC9TdGFya05vZGUtU2VydmVyL3NyYy9jbGFzcy9QYXltZW50TWV0aG9kcy5qczoxMzEyOjIzKVxuICAgIGF0IGFzeW5jIFJlZ2lzdGVyUGF5bWVudFRyYW5zYWN0aW9uICgvVXNlcnMvY2FpcXVlL2RldmVsb3AvU3RhcmtOb2RlLVNlcnZlci9zcmMvY29udHJvbGxlci9QYXltZW50VjFDb250cm9sbGVyLmpzOjU0NTo0NCkiLCJtZXNzYWdlIjoiR2FzIGVzdGltYXRpb24gZmFpbGVkLiBUaGUgdHJhbnNhY3Rpb24gd291bGQgcmV2ZXJ0IG9uLWNoYWluLiBDYXVzZTogZXhlY3V0aW9uIHJldmVydGVkIFJldmVydCBkYXRhOiAweDk0ZTY4MDhhMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwZmQwODZiYzdjZDVjNDgxZGNjOWM4NWViZTQ3OGExYzBiNjlmY2JiOTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMGM5NzRhNzU4Y2U3YzRkZDU3YTliZTFmMGUwNGQwOWY5Yzg1YmViN2IwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA5YjU3ODQ3YjY5ZDAzNTQ4MzdmN2I3MjMxMzNiOWRiY2JlZmI0ZjlmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwZTMyMiBDb250cmFjdCBlcnJvcjogRVJDMjBUcmFuc2ZlckZhaWxlZC4gTGlrZWx5IGNhdXNlczogaW5zdWZmaWNpZW50IHRva2VuIGJhbGFuY2Ugb3IgaW5zdWZmaWNpZW50IGFsbG93YW5jZSBmb3IgdGhlIGdhdGV3YXkgY29udHJhY3QuIn0sInNlc3Npb25fcGF5bWVudCI6bnVsbCwid2ViaG9va19mb3J3YXJkZWQiOmZhbHNlLCJwYWdhcm1lX2NvbmZpZyI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjYtMDQtMjRUMjI6NTA6MTYuOTEwWiIsInVwZGF0ZWRfYXQiOiIyMDI2LTA0LTI0VDIyOjUxOjM5LjI2NloiLCJpYXQiOjE3NzcwNzExMDB9.21mL8u2M2cpki6umaFHlU2aCc8fhVrMEu2L711KtznU",
+            "metadata": null,
+            "created_at": "2026-04-24T22:50:16.910Z",
+            "updated_at": "2026-04-24T22:56:40.108Z"
+        }
+    }
+    ```
+  </Step>
+  <Step title="Getting on-ramp payment details">
+    ```json expandable
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "payment_found",
+        "message": "Payment found.",
+        "data": {
+            "id": "cmodhqf38000001pjju9kxlmb",
+            "status": "success",
+            "executor_id": "api_transaction",
+            "order_code": null,
+            "tenant_data": {
+                "country": "brazil",
+                "pix_enabled": true,
+                "webhook_url": "https://webhook.site/9abdc6ad-4956-4d8c-b4d5-06eaffa30bce",
+                "public_client_id": "cmngy66mw0000e6y0uowcbxgf",
+                "bank_account_enabled": true,
+                "payment_method_allowed": {
+                    "crypto": true,
+                    "cardfiat": true,
+                    "pixcrypto": true,
+                    "cardcrypto": true
+                }
+            },
+            "payer_email": "satoshi@starkfi.io",
+            "payer_wallet": "",
+            "payer_token_symbol": null,
+            "transaction_type": "pixcrypto",
+            "payer_cpf": "***.***.***-25",
+            "tid_hash": "0x3d1dc00ae7cb7bebecd395a264e6656604fdfebb9d1fd7d1bf291601ba31e643",
+            "split_payment_config": [
+                {
+                    "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+                    "receiver_percent": 100
+                }
+            ],
+            "global_payment_data": {
+                "code": 201,
+                "txid": "282910f46cb6420388c9887a",
+                "chave": "3254cbd2-75e5-4034-abdb-ba8eebcee742",
+                "valor": {
+                    "original": 0.3,
+                    "modalidadeAlteracao": 0
+                },
+                "status": "paid",
+                "devedor": {
+                    "cnpj": "00000000000000",
+                    "nome": ""
+                },
+                "revisao": 0,
+                "location": "brcode.starkinfra.com/v2/ad6147d628b6492d8faa4ab4f3afb623",
+                "calendario": {
+                    "criacao": "2026-04-24T19:37:30.608Z",
+                    "expiracao": 3600
+                },
+                "confirmed_at": "24/04/2026, 19:39:15",
+                "pixCopiaECola": "235204000053039865802BR59254PA4Lins62070503***63047A85",
+                "infoAdicionais": [],
+                "payment_details": {
+                    "status": "paid",
+                    "confirmed_at": "24/04/2026, 19:39:15"
+                },
+                "solicitacaoPagador": "Payment on-ramp transaction from api_transaction",
+                "crypto_payment_details": {
+                    "chain_name": "Arbitrum",
+                    "amount_usdt": "0.05778",
+                    "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+                    "transaction_hash": "0x5d1b672614fb49e36791b89ce63ba2b0e36815e2455c6f3df13a658dd19bcdaa"
+                }
+            },
+            "from_currency_symbol": "BRL",
+            "amount_from": "30",
+            "amount_to": "0.05992928344553427",
+            "to_currency_symbol": "USDT",
+            "chain_name": "arbitrum",
+            "from_chain": "arbitrum",
+            "to_chain": "arbitrum",
+            "on_ramp": false,
+            "unsigned_tx": null,
+            "signed_tx": null,
+            "data_error": null,
+            "session_payment": "https://lab-app.starknode.io/sessions/payment?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtb2RocWYzODAwMDAwMXBqanU5a3hsbWIiLCJleGVjdXRvcl9pZCI6ImFwaV90cmFuc2FjdGlvbiIsIm9yZGVyX2NvZGUiOm51bGwsInRlbmFudF9kYXRhIjp7ImNvdW50cnkiOiJicmF6aWwiLCJwaXhfZW5hYmxlZCI6dHJ1ZSwid2ViaG9va191cmwiOiJodHRwczovL3dlYmhvb2suc2l0ZS85YWJkYzZhZC00OTU2LTRkOGMtYjRkNS0wNmVhZmZhMzBiY2UiLCJwdWJsaWNfY2xpZW50X2lkIjoiY21uZ3k2Nm13MDAwMGU2eTB1b3djYnhnZiIsImJhbmtfYWNjb3VudF9lbmFibGVkIjp0cnVlLCJwYXltZW50X21ldGhvZF9hbGxvd2VkIjp7ImNyeXB0byI6dHJ1ZSwiY2FyZGZpYXQiOnRydWUsInBpeGNyeXB0byI6dHJ1ZSwiY2FyZGNyeXB0byI6dHJ1ZX19LCJzdGF0dXMiOiJjcmVhdGluZ190cmFuc2FjdGlvbiIsInBheWVyX2VtYWlsIjoiZGV2LmNhaXF1ZWJlcmluZ3VpQGdtYWlsLmNvbSIsInBheWVyX3dhbGxldCI6IiIsInBheWVyX3Rva2VuX3N5bWJvbCI6bnVsbCwidHJhbnNhY3Rpb25fdHlwZSI6InBpeGNyeXB0byIsInBheWVyX2NwZiI6IjIzMTU5NDE0ODI1IiwidGlkX2hhc2giOm51bGwsIm1ldGFkYXRhIjpudWxsLCJzcGxpdF9wYXltZW50X2NvbmZpZyI6W3sicmVjZWl2ZXJfd2FsbGV0IjoiMHg5YjU3ODQ3YjY5RDAzNTQ4MzdGN2I3MjMxMzNCOWRCQ2JlZmI0RjlGIiwicmVjZWl2ZXJfcGVyY2VudCI6MTAwfV0sInN1YnNjcmlwdGlvbl9wYXltZW50X2NvbmZpZyI6bnVsbCwiZnJvbV9jdXJyZW5jeV9zeW1ib2wiOiJCUkwiLCJhbW91bnRfZnJvbSI6IjMwIiwiYW1vdW50X3RvIjoiMC4wNTk5MjkyODM0NDU1MzQyNyIsIm5ldF9hbW91bnQiOnsibmV0X2Ftb3VudCI6MC4wNTg3MzA2OTc3NzY2MjM1OCwiY29uc3VtZWRfZmVlIjoyfSwidG9fY3VycmVuY3lfc3ltYm9sIjoiVVNEVCIsImNoYWluX25hbWUiOiJhcmJpdHJ1bSIsImZyb21fY2hhaW4iOiJhcmJpdHJ1bSIsInRvX2NoYWluIjoiYXJiaXRydW0iLCJvbl9yYW1wIjpmYWxzZSwidW5zaWduZWRfdHgiOm51bGwsInNpZ25lZF90eCI6bnVsbCwiZ2xvYmFsX3BheW1lbnRfZGF0YSI6bnVsbCwiZGF0YV9lcnJvciI6bnVsbCwic2Vzc2lvbl9wYXltZW50IjpudWxsLCJ3ZWJob29rX2ZvcndhcmRlZCI6ZmFsc2UsInBhZ2FybWVfY29uZmlnIjpudWxsLCJjcmVhdGVkX2F0IjoiMjAyNi0wNC0yNFQyMjozNzoxMi41NDhaIiwidXBkYXRlZF9hdCI6IjIwMjYtMDQtMjRUMjI6Mzc6MjguMTE4WiIsImlhdCI6MTc3NzA3MDI1MH0.xg4kUiPaACT-CKXhkQOAWqOjakb3t7vaSuNt7cD6JdM",
+            "metadata": null,
+            "created_at": "2026-04-24T22:37:12.548Z",
+            "updated_at": "2026-04-24T22:39:32.225Z"
+        }
+    }
+    ```
+  </Step>
+  <Step>
+    ```json expandable
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "payment_found",
+        "message": "Payment found.",
+        "data": {
+            "id": "cmodmglpw000101o4sucrw1s0",
+            "status": "registered",
+            "executor_id": "api_transaction",
+            "order_code": null,
+            "tenant_data": {
+                "country": "brazil",
+                "pix_enabled": true,
+                "webhook_url": "https://webhook.site/97b5142a-1cb7-4142-8306-3d98a93e9a79",
+                "public_client_id": "cmngy66mw0000e6y0uowcbxgf",
+                "bank_account_enabled": true,
+                "payment_method_allowed": {
+                    "crypto": true,
+                    "cardfiat": true,
+                    "pixcrypto": true,
+                    "cardcrypto": true
+                }
+            },
+            "payer_email": "john.smith.test+pay@example.com",
+            "payer_wallet": "",
+            "payer_token_symbol": null,
+            "transaction_type": "cardcrypto",
+            "payer_cpf": null,
+            "tid_hash": null,
+            "split_payment_config": [
+                {
+                    "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+                    "receiver_percent": 100
+                }
+            ],
+            "global_payment_data": {
+                "id": "or_YXzQWXYTW7IMlaZK",
+                "ip": "::ffff:100.64.0.5",
+                "code": "cmodmglpw000101o4sucrw1s0",
+                "items": [
+                    {
+                        "id": "oi_8QJL1oxtp0f5eV46",
+                        "code": "cmodmglpw000101o4sucrw1s0",
+                        "type": "product",
+                        "amount": 30,
+                        "status": "active",
+                        "quantity": 1,
+                        "created_at": "2026-04-25T00:49:46Z",
+                        "updated_at": "2026-04-25T00:49:46Z",
+                        "description": "Payment order cmodmglpw000101o4sucrw1s0"
+                    }
+                ],
+                "amount": 30,
+                "closed": true,
+                "status": "failed",
+                "charges": [
+                    {
+                        "id": "ch_8YDGnPVHRuZNjml5",
+                        "code": "cmodmglpw000101o4sucrw1s0",
+                        "amount": 30,
+                        "status": "failed",
+                        "currency": "BRL",
+                        "customer": {
+                            "id": "cus_v4em6oqtgCAdprPz",
+                            "name": "John Michael Smith",
+                            "type": "individual",
+                            "email": "john.smith.test+pay@example.com",
+                            "phones": {
+                                "mobile_phone": {
+                                    "number": "5550199",
+                                    "area_code": "415",
+                                    "country_code": "1"
+                                }
+                            },
+                            "address": {
+                                "id": "addr_rJv5Ba1FDyhXwYZ1",
+                                "city": "San Francisco",
+                                "state": "CA",
+                                "line_1": "Market Street, 101",
+                                "line_2": "Apt 4B — SoMa",
+                                "status": "active",
+                                "country": "US",
+                                "zip_code": "941071234",
+                                "created_at": "2026-04-07T00:14:59Z",
+                                "updated_at": "2026-04-25T00:49:45Z"
+                            },
+                            "document": "123456789",
+                            "metadata": {
+                                "payment_id": "cmodmglpw000101o4sucrw1s0",
+                                "transaction_type": "cardcrypto"
+                            },
+                            "created_at": "2026-04-07T00:14:59Z",
+                            "delinquent": false,
+                            "updated_at": "2026-04-25T00:49:45Z",
+                            "document_type": "passport"
+                        },
+                        "metadata": {
+                            "payment_id": "cmodmglpw000101o4sucrw1s0"
+                        },
+                        "created_at": "2026-04-25T00:49:46Z",
+                        "updated_at": "2026-04-25T00:49:46Z",
+                        "payment_method": "credit_card",
+                        "last_transaction": {
+                            "id": "tran_kArLp6ytejFrPnoM",
+                            "card": {
+                                "id": "card_ndDlAJgZH3F7PVr6",
+                                "type": "credit",
+                                "brand": "Visa",
+                                "status": "active",
+                                "exp_year": 2030,
+                                "exp_month": 12,
+                                "created_at": "2026-04-07T00:15:00Z",
+                                "updated_at": "2026-04-25T00:49:46Z",
+                                "holder_name": "JOHN M SMITH",
+                                "billing_address": {
+                                    "city": "San Francisco",
+                                    "state": "CA",
+                                    "line_1": "Market Street, 101",
+                                    "line_2": "Apt 4B — SoMa",
+                                    "country": "US",
+                                    "zip_code": "941071234"
+                                },
+                                "holder_document": "123456789",
+                                "first_six_digits": "411111",
+                                "last_four_digits": "1111"
+                            },
+                            "amount": 30,
+                            "status": "failed",
+                            "success": false,
+                            "metadata": {},
+                            "created_at": "2026-04-25T00:49:46Z",
+                            "updated_at": "2026-04-25T00:49:46Z",
+                            "installments": 1,
+                            "operation_type": "auth_and_capture",
+                            "gateway_response": {
+                                "code": "400",
+                                "errors": [
+                                    {
+                                        "message": "invalid_parameter | amount | valor não permitido"
+                                    }
+                                ]
+                            },
+                            "transaction_type": "credit_card",
+                            "antifraud_response": {},
+                            "statement_descriptor": "STARKNODE"
+                        }
+                    }
+                ],
+                "currency": "BRL",
+                "customer": {
+                    "id": "cus_v4em6oqtgCAdprPz",
+                    "name": "John Michael Smith",
+                    "type": "individual",
+                    "email": "john.smith.test+pay@example.com",
+                    "phones": {
+                        "mobile_phone": {
+                            "number": "5550199",
+                            "area_code": "415",
+                            "country_code": "1"
+                        }
+                    },
+                    "address": {
+                        "id": "addr_rJv5Ba1FDyhXwYZ1",
+                        "city": "San Francisco",
+                        "state": "CA",
+                        "line_1": "Market Street, 101",
+                        "line_2": "Apt 4B — SoMa",
+                        "status": "active",
+                        "country": "US",
+                        "zip_code": "941071234",
+                        "created_at": "2026-04-07T00:14:59Z",
+                        "updated_at": "2026-04-25T00:49:45Z"
+                    },
+                    "document": "123456789",
+                    "metadata": {
+                        "payment_id": "cmodmglpw000101o4sucrw1s0",
+                        "transaction_type": "cardcrypto"
+                    },
+                    "created_at": "2026-04-07T00:14:59Z",
+                    "delinquent": false,
+                    "updated_at": "2026-04-25T00:49:45Z",
+                    "document_type": "passport"
+                },
+                "metadata": {
+                    "payment_id": "cmodmglpw000101o4sucrw1s0"
+                },
+                "checkouts": [],
+                "closed_at": "2026-04-25T00:49:46Z",
+                "created_at": "2026-04-25T00:49:46Z",
+                "session_id": "opcional-session-uuid",
+                "updated_at": "2026-04-25T00:49:46Z"
+            },
+            "from_currency_symbol": "BRL",
+            "amount_from": "30",
+            "amount_to": "0.05994005994005994",
+            "to_currency_symbol": "USDT",
+            "chain_name": "arbitrum",
+            "from_chain": "arbitrum",
+            "to_chain": "arbitrum",
+            "on_ramp": false,
+            "unsigned_tx": null,
+            "signed_tx": null,
+            "data_error": null,
+            "session_payment": "https://lab-app.starknode.io/sessions/payment?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtb2RtZ2xwdzAwMDEwMW80c3VjcncxczAiLCJleGVjdXRvcl9pZCI6ImFwaV90cmFuc2FjdGlvbiIsIm9yZGVyX2NvZGUiOm51bGwsInRlbmFudF9kYXRhIjp7ImNvdW50cnkiOiJicmF6aWwiLCJwaXhfZW5hYmxlZCI6dHJ1ZSwid2ViaG9va191cmwiOiJodHRwczovL3dlYmhvb2suc2l0ZS85N2I1MTQyYS0xY2I3LTQxNDItODMwNi0zZDk4YTkzZTlhNzkiLCJwdWJsaWNfY2xpZW50X2lkIjoiY21uZ3k2Nm13MDAwMGU2eTB1b3djYnhnZiIsImJhbmtfYWNjb3VudF9lbmFibGVkIjp0cnVlLCJwYXltZW50X21ldGhvZF9hbGxvd2VkIjp7ImNyeXB0byI6dHJ1ZSwiY2FyZGZpYXQiOnRydWUsInBpeGNyeXB0byI6dHJ1ZSwiY2FyZGNyeXB0byI6dHJ1ZX19LCJzdGF0dXMiOiJjcmVhdGluZ190cmFuc2FjdGlvbiIsInBheWVyX2VtYWlsIjoiam9obi5zbWl0aC50ZXN0K3BheUBleGFtcGxlLmNvbSIsInBheWVyX3dhbGxldCI6IiIsInBheWVyX3Rva2VuX3N5bWJvbCI6bnVsbCwidHJhbnNhY3Rpb25fdHlwZSI6ImNhcmRjcnlwdG8iLCJwYXllcl9jcGYiOiIiLCJ0aWRfaGFzaCI6bnVsbCwibWV0YWRhdGEiOm51bGwsInNwbGl0X3BheW1lbnRfY29uZmlnIjpbeyJyZWNlaXZlcl93YWxsZXQiOiIweDliNTc4NDdiNjlEMDM1NDgzN0Y3YjcyMzEzM0I5ZEJDYmVmYjRGOUYiLCJyZWNlaXZlcl9wZXJjZW50IjoxMDB9XSwic3Vic2NyaXB0aW9uX3BheW1lbnRfY29uZmlnIjpudWxsLCJmcm9tX2N1cnJlbmN5X3N5bWJvbCI6IkJSTCIsImFtb3VudF9mcm9tIjoiMzAiLCJhbW91bnRfdG8iOiIwLjA1OTk0MDA1OTk0MDA1OTk0IiwibmV0X2Ftb3VudCI6eyJuZXRfYW1vdW50IjowLjA1ODc0MTI1ODc0MTI1ODc0LCJjb25zdW1lZF9mZWUiOjJ9LCJ0b19jdXJyZW5jeV9zeW1ib2wiOiJVU0RUIiwiY2hhaW5fbmFtZSI6ImFyYml0cnVtIiwiZnJvbV9jaGFpbiI6ImFyYml0cnVtIiwidG9fY2hhaW4iOiJhcmJpdHJ1bSIsIm9uX3JhbXAiOmZhbHNlLCJ1bnNpZ25lZF90eCI6bnVsbCwic2lnbmVkX3R4IjpudWxsLCJnbG9iYWxfcGF5bWVudF9kYXRhIjpudWxsLCJkYXRhX2Vycm9yIjpudWxsLCJzZXNzaW9uX3BheW1lbnQiOm51bGwsIndlYmhvb2tfZm9yd2FyZGVkIjpmYWxzZSwicGFnYXJtZV9jb25maWciOm51bGwsImNyZWF0ZWRfYXQiOiIyMDI2LTA0LTI1VDAwOjQ5OjMyLjY2MFoiLCJ1cGRhdGVkX2F0IjoiMjAyNi0wNC0yNVQwMDo0OTo0My44ODVaIiwiaWF0IjoxNzc3MDc4MTg2fQ.YD6t-4WpVQ45KtPYmYe2CGvObDrTTqbRPbFO5kVDBPQ",
+            "metadata": null,
+            "created_at": "2026-04-25T00:49:32.660Z",
+            "updated_at": "2026-04-25T00:49:46.583Z"
+        }
+    }
+    ```
+  </Step>
+</Steps>
+
+The data for this entity can be retrieved through this `GET` endpoint. Additionally, this information is automatically delivered via webhook whenever a trigger action occurs, ensuring real-time updates.
+
+The `status` field is an enum and may assume the following values:
+
+- `SUCCESS` — operation completed successfully
+- `ERROR` — processing failed
+- `PENDING` — operation in progress or awaiting review
+- `REPROVED` — operation rejected

@@ -18,7 +18,20 @@
             "pages": [
               "index",
               "authentication",
-              "development"
+              "development",
+              "supported-chains"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              {
+                "group": "StarkPay",
+                "pages": [
+                  "starkpay",
+                  "create-transactions"
+                ]
+              }
             ]
           }
         ]
