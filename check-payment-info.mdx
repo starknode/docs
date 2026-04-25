@@ -2,7 +2,12 @@
 title: "Check Payment Info"
 api: "GET /payment/{id}/status"
 description: "Retrieve the current status and full details of a payment transaction."
+authMethod: "key"
 ---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
 
 <ParamField path="id" type="string" required>
   The unique identifier of the payment transaction.
