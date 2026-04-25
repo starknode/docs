@@ -2,3 +2,98 @@
 title: "Create transactions"
 description: "In this section, you will learn how to create payment orders and generate transactions, understanding each step of the flow required to process payments with StarkPay."
 ---
+
+import SnippetIntro from '/snippets/snippet-intro.mdx';
+
+<Info>
+  You can create predefined payment orders as catalog items. This allows you to reuse them whenever needed, without having to create a new transaction for each request.
+</Info>
+
+<Steps>
+  <Step title="Create a payment intent">
+    Registering a payment intent 
+
+    ```shellscript
+    POST /payment/register/intents-create-order
+    ```
+
+    ## Request Body
+
+    | Parameter | Type | Required | Description |
+    | --- | --- | --- | --- |
+    | `executor_id` | string | ✅ | Transaction executor type. Use `api_transaction` when request comes via API |
+    | `tenant_data` | object | ✅ | Tenant configuration object |
+    | `tenant_data.public_client_id` | string | ✅ | Your public client ID |
+    | `tenant_data.webhook_url` | string | ✅ | Webhook URL to receive transaction status updates |
+    | `payment_method_allowed` | object | ✅ | Object defining which payment methods are enabled |
+    | `payment_method_allowed.pixcrypto` | boolean |  | Enable PIX → Crypto payments |
+    | `payment_method_allowed.cardcrypto` | boolean |  | Enable Card → Crypto payments |
+    | `payment_method_allowed.cardfiat` | boolean |  | Enable Card → Fiat payments |
+    | `payment_method_allowed.cryptopix` | boolean |  | Enable Crypto → PIX payments |
+    | `payment_method_allowed.crypto` | boolean |  | Enable Crypto → Crypto payments |
+    | `split_payment_config` | array | ✅ | List of receivers for payment splitting |
+    | `split_payment_config[].receiver_wallet` | string | ✅ | Wallet address to receive the funds |
+    | `split_payment_config[].receiver_percent` | number | ✅ | Percentage of the payment this wallet receives (0–100) |
+    | `gateway_method` | string | ✅ | Gateway processing method. Use `direct` for direct processing or `subs `for subscription payments |
+    | `from_currency_symbol` | string | ✅ | Source currency code (e.g. `BRLUSD` ) |
+    | `amount_from` | string | ✅ | Amount to be converted from source currency |
+    | `to_currency_symbol` | string | ✅ | Target currency code (e.g. `USDT`) |
+    | `to_chain` | string | ✅ | The destination blockchain network where you wish to receive the selected currency. (e.g. `solana`) |
+    | `on_ramp` | boolean | ✅ | Set `true` for on-ramp flow, `false` for off-ramp |
+
+    <Note>
+      The **on-ramp** feature is not available for receiving payments via PIX. It can only be used for user-initiated payments. All requests related to incoming payments must set `on_ramp = false`.
+    </Note>
+  </Step>
+  <Step title="Example Request">
+    ```shellscript expandable
+    curl --request POST \
+      --url https://api.starkpay.com/payment/register/intents-create-order \
+      --header 'Content-Type: application/json' \
+      --header 'Authorization: Bearer <token>' \
+      --data '{
+      "executor_id": "api_transaction",
+      "tenant_data": {
+        "public_client_id": "cmngy66mw0000e6y0uowcbxgf",
+        "webhook_url": "https://webhook.site/97b5142a-1cb7-4142-8306-3d98a93e9a79"
+      },
+      "payment_method_allowed": {
+        "pixcrypto": true,
+        "cardcrypto": true,
+        "cardfiat": true,
+        "cryptopix": true,
+        "crypto": true
+      },
+      "split_payment_config": [
+        {
+          "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+          "receiver_percent": 100
+        }
+      ],
+      "gateway_method": "direct",
+      "from_currency_symbol": "BRL",
+      "amount_from": "30",
+      "to_currency_symbol": "USDT",
+      "to_chain": "arbitrum",
+      "on_ramp": false
+    }'
+    ```
+  </Step>
+  <Step title="Response Expected">
+    ```json
+    {
+        "statusCode": 201,
+        "success": true,
+        "status": "payment_registered",
+        "message": "Payment has been registered",
+        "data": {
+            "payment_id": "cmodpory6000001nyoe3d12m1"
+        }
+    }
+    ```
+  </Step>
+</Steps>
+
+<ParamField type="string">
+  `Enter a description`
+</ParamField>

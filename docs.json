@@ -31,6 +31,12 @@
                   "starkpay",
                   "create-transactions"
                 ]
+              },
+              {
+                "group": "Orders",
+                "pages": [
+                  "untitled-page"
+                ]
               }
             ]
           }
