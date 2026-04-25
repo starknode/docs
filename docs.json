@@ -30,7 +30,8 @@
                 "pages": [
                   "starkpay",
                   "register-order-trasanction",
-                  "create-transaction"
+                  "create-transaction",
+                  "broadcast-transactions"
                 ]
               },
               {
