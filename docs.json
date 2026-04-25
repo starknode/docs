@@ -56,7 +56,8 @@
           {
             "group": "StarkPay",
             "pages": [
-              "check-payment-info"
+              "check-payment-info",
+              "register-order-transaction"
             ]
           }
         ]

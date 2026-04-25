@@ -1,0 +1,275 @@
+---
+title: "Register Order Transaction"
+api: "POST /payment/register/intents-create-order"
+description: "Create a predefined payment order that can be reused across multiple transactions without creating a new one each time."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<ParamField body="executor_id" type="string" required>
+  Transaction executor type. Use `api_transaction` when the request comes via API.
+</ParamField>
+
+<ParamField body="tenant_data" type="object" required>
+  Tenant configuration object.
+
+  <Expandable title="tenant_data">
+    <ParamField body="public_client_id" type="string" required>
+      Your public client ID.
+    </ParamField>
+    <ParamField body="webhook_url" type="string" required>
+      Webhook URL to receive transaction status updates.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="payment_method_allowed" type="object" required>
+  Object defining which payment methods are enabled for this order.
+
+  <Expandable title="payment_method_allowed">
+    <ParamField body="pixcrypto" type="boolean">
+      Enable PIX → Crypto payments.
+    </ParamField>
+    <ParamField body="cardcrypto" type="boolean">
+      Enable Card → Crypto payments.
+    </ParamField>
+    <ParamField body="cardfiat" type="boolean">
+      Enable Card → Fiat payments.
+    </ParamField>
+    <ParamField body="cryptopix" type="boolean">
+      Enable Crypto → PIX payments.
+    </ParamField>
+    <ParamField body="crypto" type="boolean">
+      Enable Crypto → Crypto payments.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="split_payment_config" type="array" required>
+  List of receivers for payment splitting. Percentages must add up to 100.
+
+  <Expandable title="split_payment_config[]">
+    <ParamField body="receiver_wallet" type="string" required>
+      Wallet address to receive the funds.
+    </ParamField>
+    <ParamField body="receiver_percent" type="number" required>
+      Percentage of the payment this wallet receives (0–100).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="gateway_method" type="enum<string>" required>
+  Gateway processing method. Available options: `direct`, `subs`
+
+  - `direct` — one-time direct payment processing
+  - `subs` — subscription-based recurring payments
+</ParamField>
+
+<ParamField body="from_currency_symbol" type="string" required>
+  Source currency code (e.g. `BRL`).
+</ParamField>
+
+<ParamField body="amount_from" type="string" required>
+  Amount to be converted from the source currency (e.g. `"30"`).
+</ParamField>
+
+<ParamField body="to_currency_symbol" type="string" required>
+  Target currency code (e.g. `USDT`).
+</ParamField>
+
+<ParamField body="to_chain" type="string" required>
+  Destination blockchain network where you wish to receive the selected currency (e.g. `arbitrum`, `solana`).
+</ParamField>
+
+<ParamField body="on_ramp" type="boolean" required>
+  Set `true` for on-ramp flow, `false` for off-ramp.
+
+  <Warning>
+    The on-ramp feature is **not available** for receiving payments via PIX. It can only be used for user-initiated payments. All requests related to incoming payments must set `on_ramp: false`.
+  </Warning>
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request POST \
+  --url https://api.starknode.io/payment/register/intents-create-order \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{
+    "executor_id": "api_transaction",
+    "tenant_data": {
+      "public_client_id": "cmngy66mw0000e6y0uowcbxgf",
+      "webhook_url": "https://webhook.site/97b5142a-1cb7-4142-8306-3d98a93e9a79"
+    },
+    "payment_method_allowed": {
+      "pixcrypto": true,
+      "cardcrypto": true,
+      "cardfiat": true,
+      "cryptopix": true,
+      "crypto": true
+    },
+    "split_payment_config": [
+      {
+        "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+        "receiver_percent": 100
+      }
+    ],
+    "gateway_method": "direct",
+    "from_currency_symbol": "BRL",
+    "amount_from": "30",
+    "to_currency_symbol": "USDT",
+    "to_chain": "arbitrum",
+    "on_ramp": false
+  }'
+```
+
+```javascript Node.js
+const response = await fetch(
+  "https://api.starknode.io/payment/register/intents-create-order",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "<api_key>",
+    },
+    body: JSON.stringify({
+      executor_id: "api_transaction",
+      tenant_data: {
+        public_client_id: "cmngy66mw0000e6y0uowcbxgf",
+        webhook_url: "https://webhook.site/97b5142a-1cb7-4142-8306-3d98a93e9a79",
+      },
+      payment_method_allowed: {
+        pixcrypto: true,
+        cardcrypto: true,
+        cardfiat: true,
+        cryptopix: true,
+        crypto: true,
+      },
+      split_payment_config: [
+        {
+          receiver_wallet: "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+          receiver_percent: 100,
+        },
+      ],
+      gateway_method: "direct",
+      from_currency_symbol: "BRL",
+      amount_from: "30",
+      to_currency_symbol: "USDT",
+      to_chain: "arbitrum",
+      on_ramp: false,
+    }),
+  }
+);
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.starknode.io/payment/register/intents-create-order",
+    headers={
+        "Content-Type": "application/json",
+        "x-api-key": "<api_key>",
+    },
+    json={
+        "executor_id": "api_transaction",
+        "tenant_data": {
+            "public_client_id": "cmngy66mw0000e6y0uowcbxgf",
+            "webhook_url": "https://webhook.site/97b5142a-1cb7-4142-8306-3d98a93e9a79",
+        },
+        "payment_method_allowed": {
+            "pixcrypto": True,
+            "cardcrypto": True,
+            "cardfiat": True,
+            "cryptopix": True,
+            "crypto": True,
+        },
+        "split_payment_config": [
+            {
+                "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+                "receiver_percent": 100,
+            }
+        ],
+        "gateway_method": "direct",
+        "from_currency_symbol": "BRL",
+        "amount_from": "30",
+        "to_currency_symbol": "USDT",
+        "to_chain": "arbitrum",
+        "on_ramp": False,
+    },
+)
+
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 201 - Success
+{
+  "statusCode": 201,
+  "success": true,
+  "status": "payment_registered",
+  "message": "Payment has been registered",
+  "data": {
+    "payment_id": "cmodpory6000001nyoe3d12m1"
+  }
+}
+```
+
+```json 401 - Unauthorized
+{
+  "statusCode": 401,
+  "success": false,
+  "status": "unauthorized",
+  "message": "Invalid or missing API key."
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "validation_error",
+  "message": "Validation failed.",
+  "errors": [
+    {
+      "field": "split_payment_config",
+      "message": "receiver_percent values must sum to 100."
+    }
+  ]
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="statusCode" type="number" required>
+  HTTP status code. Returns `201` on successful registration.
+</ResponseField>
+
+<ResponseField name="success" type="boolean" required>
+  Whether the request succeeded.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+  Status label for the response (e.g. `payment_registered`).
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  Human-readable response message.
+</ResponseField>
+
+<ResponseField name="data" type="object" required>
+  Response payload.
+
+  <Expandable title="data">
+    <ResponseField name="payment_id" type="string" required>
+      The unique ID of the registered payment order. Use this ID in subsequent calls to [Create Transaction](/create-transaction).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
