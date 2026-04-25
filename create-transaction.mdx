@@ -158,8 +158,40 @@ console.log("Signed transaction:", signedTx);
     | Parameter | Type | Required | Description |
     | :-- | :-- | :-- | :-- |
     | `payment_id` | string | ✅ | Payment id returned by register order endpoint |
-    | payer\_cpf | string | ✅ | User cpf/cnpj |
-    | payer\_email | string | ✅ | User email address |
-    | transaction\_type | string | ✅ | pixcrypto or fiatcrypto |
+    | `payer_cpf` | string | ✅ | User cpf/cnpj |
+    | `payer_email` | string | ✅ | User email address |
+    | `transaction_type` | string | ✅ | pixcrypto or fiatcrypto |
+
+    #### Response Expected
+
+    ```json expandable
+    {
+        "statusCode": 201,
+        "success": true,
+        "status": "payment_registered",
+        "message": "Payment has been registered",
+        "data": {
+            "session_payment": "https://app.starknode.io/sessions/payment?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtb2RocWYzODAwMDAwMXBqanU5a3hsbWIiLCJleGVjdXRvcl9pZCI6ImFwaV90cmFuc2FjdGlvbiIsIm9yZGVyX2NvZGUiOm51bGwsInRlbmFudF9kYXRhIjp7ImNvdW50cnkiOiJicmF6aWwiLCJwaXhfZW5hYmxlZCI6dHJ1ZSwid2ViaG9va191cmwiOiJodHRwczovL3dlYmhvb2suc2l0ZS85YWJkYzZhZC00OTU2LTRkOGMtYjRkNS0wNmVhZmZhMzBiY2UiLCJwdWJsaWNfY2xpZW50X2lkIjoiY21uZ3k2Nm13MDAwMGU2eTB1b3djYnhnZiIsImJhbmtfYWNjb3VudF9lbmFibGVkIjp0cnVlLCJwYXltZW50X21ldGhvZF9hbGxvd2VkIjp7ImNyeXB0byI6dHJ1ZSwiY2FyZGZpYXQiOnRydWUsInBpeGNyeXB0byI6dHJ1ZSwiY2FyZGNyeXB0byI6dHJ1ZX19LCJzdGF0dXMiOiJjcmVhdGluZ190cmFuc2FjdGlvbiIsInBheWVyX2VtYWlsIjoiZGV2LmNhaXF1ZWJlcmluZ3VpQGdtYWlsLmNvbSIsInBheWVyX3dhbGxldCI6IiIsInBheWVyX3Rva2VuX3N5bWJvbCI6bnVsbCwidHJhbnNhY3Rpb25fdHlwZSI6InBpeGNyeXB0byIsInBheWVyX2NwZiI6IjIzMTU5NDE0ODI1IiwidGlkX2hhc2giOm51bGwsIm1ldGFkYXRhIjpudWxsLCJzcGxpdF9wYXltZW50X2NvbmZpZyI6W3sicmVjZWl2ZXJfd2FsbGV0IjoiMHg5YjU3ODQ3YjY5RDAzNTQ4MzdGN2I3MjMxMzNCOWRCQ2JlZmI0RjlGIiwicmVjZWl2ZXJfcGVyY2VudCI6MTAwfV0sInN1YnNjcmlwdGlvbl9wYXltZW50X2NvbmZpZyI6bnVsbCwiZnJvbV9jdXJyZW5jeV9zeW1ib2wiOiJCUkwiLCJhbW91bnRfZnJvbSI6IjMwIiwiYW1vdW50X3RvIjoiMC4wNTk5MjkyODM0NDU1MzQyNyIsIm5ldF9hbW91bnQiOnsibmV0X2Ftb3VudCI6MC4wNTg3MzA2OTc3NzY2MjM1OCwiY29uc3VtZWRfZmVlIjoyfSwidG9fY3VycmVuY3lfc3ltYm9sIjoiVVNEVCIsImNoYWluX25hbWUiOiJhcmJpdHJ1bSIsImZyb21fY2hhaW4iOiJhcmJpdHJ1bSIsInRvX2NoYWluIjoiYXJiaXRydW0iLCJvbl9yYW1wIjpmYWxzZSwidW5zaWduZWRfdHgiOm51bGwsInNpZ25lZF90eCI6bnVsbCwiZ2xvYmFsX3BheW1lbnRfZGF0YSI6bnVsbCwiZGF0YV9lcnJvciI6bnVsbCwic2Vzc2lvbl9wYXltZW50IjpudWxsLCJ3ZWJob29rX2ZvcndhcmRlZCI6ZmFsc2UsInBhZ2FybWVfY29uZmlnIjpudWxsLCJjcmVhdGVkX2F0IjoiMjAyNi0wNC0yNFQyMjozNzoxMi41NDhaIiwidXBkYXRlZF9hdCI6IjIwMjYtMDQtMjRUMjI6Mzc6MjguMTE4WiIsImlhdCI6MTc3NzA3MDI1MH0.xg4kUiPaACT-CKXhkQOAWqOjakb3t7vaSuNt7cD6JdM",
+            "payment_id": "cmodhqf38000001pjju9kxlmb",
+            "crypto_tx": "This details is available only for crypto payments",
+            "fiat_tx": {
+                "calendar": {
+                    "criacao": "2026-04-24T19:37:30.608Z",
+                    "expiracao": 3600
+                },
+                "pix_key": "3254cbd2-75e5-4034-abdb-ba8eebcee742",
+                "txid": "282910f46cb6420388c9887a",
+                "status": "ATIVA",
+                "pixCopiaECola": "00020101021226790014br.gov.bcb.p03***63047A85",
+                "pix_qr_code_data_url": "data:image/png;base64,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",
+                "code": 201
+            }
+        }
+    }
+    ```
+
+    <Info>
+      With the required data in hand, simply display the payment QR code so the user can scan it using their banking app and complete the payment.  From that point on, our backend automatically monitors the transaction status and, once confirmed, delivers the crypto assets directly to the registered wallet.
+    </Info>
   </Step>
 </Steps>
