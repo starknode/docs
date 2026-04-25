@@ -58,7 +58,8 @@
             "pages": [
               "check-payment-info",
               "register-order-transaction",
-              "create-transaction-1"
+              "create-transaction-1",
+              "broadcast-transaction"
             ]
           }
         ]
