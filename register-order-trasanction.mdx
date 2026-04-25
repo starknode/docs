@@ -50,7 +50,7 @@ import SnippetIntro from '/snippets/snippet-intro.mdx';
     curl --request POST \
       --url https://api.starkpay.com/payment/register/intents-create-order \
       --header 'Content-Type: application/json' \
-      --header 'Authorization: Bearer <token>' \
+      --header 'x-api-key: <api_key>' \
       --data '{
       "executor_id": "api_transaction",
       "tenant_data": {
