@@ -1,0 +1,486 @@
+---
+title: "Create Transaction"
+api: "POST /payment/register/intents-create-transaction"
+description: "Generate a transaction from a registered payment order. The required parameters vary by transaction type — always validate the type before building the request."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<Info>
+  The transaction type defines the required and optional request parameters. Always validate the specified type before building the request.
+</Info>
+
+<ParamField body="payment_id" type="string" required>
+  Payment ID returned by the [Register Order Transaction](/register-order-transaction) endpoint.
+</ParamField>
+
+<ParamField body="transaction_type" type="enum<string>" required>
+  Defines the payment method. Available options: `crypto`, `pixcrypto`, `fiatcrypto`, `cardcrypto`, `cardfiat`
+</ParamField>
+
+<ParamField body="payer_email" type="string" required>
+  Payer's email address.
+</ParamField>
+
+---
+
+### Crypto transaction fields
+
+<ParamField body="payer_wallet" type="string">
+  Payer's public wallet address. **Required** for `crypto` transactions.
+</ParamField>
+
+<ParamField body="chain_name" type="string">
+  The chain the user will pay from (e.g. `arbitrum`, `solana`). **Required** for `crypto` transactions.
+</ParamField>
+
+<ParamField body="payer_token_symbol" type="string">
+  Token the user will pay with (e.g. `USDC`, `SOL`, `ETH`). **Required** for `crypto` transactions.
+</ParamField>
+
+---
+
+### On-ramp (Pix / Fiat) transaction fields
+
+<ParamField body="payer_cpf" type="string">
+  Payer's CPF or CNPJ. **Required** for `pixcrypto` and `fiatcrypto` transactions.
+</ParamField>
+
+---
+
+### Credit card transaction fields
+
+<ParamField body="payer_name" type="string">
+  Payer's full name. **Required** for `cardcrypto` and `cardfiat` transactions.
+</ParamField>
+
+<ParamField body="payer_document" type="string">
+  Payer's document number. **Required** for card transactions.
+</ParamField>
+
+<ParamField body="payer_document_type" type="enum<string>">
+  Document type. Available options: `PASSPORT`, `CPF`, `CNPJ`. **Required** for card transactions.
+</ParamField>
+
+<ParamField body="payer_ip" type="string">
+  Payer's IP address. Required when using tokenized card.
+</ParamField>
+
+<ParamField body="session_id" type="string">
+  Session identifier for fraud prevention. Required when using tokenized card.
+</ParamField>
+
+<ParamField body="payer_phone" type="object">
+  Payer phone details. **Required** for card transactions.
+
+  <Expandable title="payer_phone">
+    <ParamField body="country_code" type="string" required>
+      Country code (e.g. `55` for Brazil, `1` for USA).
+    </ParamField>
+    <ParamField body="area_code" type="string" required>
+      Area code / DDD (e.g. `11` for São Paulo).
+    </ParamField>
+    <ParamField body="number" type="string" required>
+      Phone number.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="card_data" type="object">
+  Card payment configuration. **Required** for card transactions.
+
+  <Expandable title="card_data">
+    <ParamField body="installments" type="number" required>
+      Number of installments. Only `1` (one-time payment) is currently supported.
+    </ParamField>
+    <ParamField body="statement_descriptor" type="string" required>
+      Label that appears on the payer's card statement (e.g. `STARKNODE`).
+    </ParamField>
+    <ParamField body="card_token" type="string">
+      Tokenized card ID from the [tokenization endpoint](#tokenization). Use this instead of raw `card` data.
+    </ParamField>
+    <ParamField body="card" type="object">
+      Raw card details. Use only if not using `card_token`.
+
+      <Expandable title="card">
+        <ParamField body="number" type="string" required>Card number (e.g. `4111111111111111`).</ParamField>
+        <ParamField body="holder_name" type="string" required>Name printed on the card.</ParamField>
+        <ParamField body="holder_document" type="string" required>Card holder document number.</ParamField>
+        <ParamField body="exp_month" type="number" required>Expiration month (e.g. `12`).</ParamField>
+        <ParamField body="exp_year" type="number" required>Expiration year (e.g. `2030`).</ParamField>
+        <ParamField body="cvv" type="string" required>Card security code.</ParamField>
+        <ParamField body="brand" type="string" required>Card brand (e.g. `Visa`, `Mastercard`).</ParamField>
+      </Expandable>
+    </ParamField>
+    <ParamField body="address" type="object" required>
+      Billing address for the card.
+
+      <Expandable title="address">
+        <ParamField body="country" type="string" required>Country code (e.g. `USA`, `BRA`, `BR`).</ParamField>
+        <ParamField body="state" type="string" required>State or province (e.g. `CA`, `SP`).</ParamField>
+        <ParamField body="city" type="string" required>City name.</ParamField>
+        <ParamField body="neighborhood" type="string" required>Neighborhood or district.</ParamField>
+        <ParamField body="street" type="string" required>Street name.</ParamField>
+        <ParamField body="street_number" type="string" required>Street number.</ParamField>
+        <ParamField body="zipcode" type="string" required>ZIP or postal code (numbers only).</ParamField>
+        <ParamField body="complement" type="string">Additional address info (e.g. `Apt 4B`). Optional.</ParamField>
+      </Expandable>
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<RequestExample>
+
+```bash Crypto (cURL)
+curl --request POST \
+  --url https://api.starknode.io/payment/register/intents-create-transaction \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{
+    "payment_id": "cmodpory6000001nyoe3d12m1",
+    "payer_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+    "payer_email": "satoshi@starkfi.io",
+    "chain_name": "arbitrum",
+    "payer_token_symbol": "USDT",
+    "transaction_type": "crypto"
+  }'
+```
+
+```bash Pix → Crypto (cURL)
+curl --request POST \
+  --url https://api.starknode.io/payment/register/intents-create-transaction \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{
+    "payment_id": "cmodpory6000001nyoe3d12m1",
+    "payer_cpf": "12345678900",
+    "payer_email": "satoshi@starkfi.io",
+    "transaction_type": "pixcrypto"
+  }'
+```
+
+```bash Card → Crypto (cURL)
+curl --request POST \
+  --url https://api.starknode.io/payment/register/intents-create-transaction \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{
+    "payment_id": "cmodpory6000001nyoe3d12m1",
+    "transaction_type": "cardcrypto",
+    "payer_email": "john@example.com",
+    "payer_name": "John Michael Smith",
+    "payer_document": "123456789",
+    "payer_document_type": "PASSPORT",
+    "payer_ip": "200.100.50.25",
+    "session_id": "optional-session-uuid",
+    "payer_phone": {
+      "country_code": "1",
+      "area_code": "415",
+      "number": "5550199"
+    },
+    "card_data": {
+      "installments": 1,
+      "statement_descriptor": "STARKNODE",
+      "card_token": "token_wxDE5l3uGofL5KzR",
+      "address": {
+        "country": "US",
+        "state": "CA",
+        "city": "San Francisco",
+        "neighborhood": "SoMa",
+        "street": "Market Street",
+        "street_number": "101",
+        "zipcode": "941071234",
+        "complement": "Apt 4B"
+      }
+    }
+  }'
+```
+
+```javascript Node.js (Crypto)
+const response = await fetch(
+  "https://api.starknode.io/payment/register/intents-create-transaction",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "<api_key>",
+    },
+    body: JSON.stringify({
+      payment_id: "cmodpory6000001nyoe3d12m1",
+      payer_wallet: "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+      payer_email: "satoshi@starkfi.io",
+      chain_name: "arbitrum",
+      payer_token_symbol: "USDT",
+      transaction_type: "crypto",
+    }),
+  }
+);
+
+const data = await response.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 201 - Crypto (EVM)
+{
+  "statusCode": 201,
+  "success": true,
+  "status": "payment_registered",
+  "message": "Payment has been registered",
+  "data": {
+    "payment_id": "cmodi78b2000101pjezst1ics",
+    "session_payment": "https://app.starknode.io/sessions/payment?token=<jwt>",
+    "crypto_tx": {
+      "schema_version": 1,
+      "family": "evm",
+      "chain_name": "arbitrum",
+      "transactionRequest": {
+        "from": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+        "to": "0x23183C87c9c6668edf5974893905AF475c3664c9",
+        "data": "0x40180def...",
+        "value": 0,
+        "chainId": 42161,
+        "gasLimit": "82499",
+        "maxPriorityFeePerGas": "0",
+        "maxFeePerGas": "52514800",
+        "nonce": 36
+      },
+      "meta": {
+        "source": "evm_split"
+      }
+    },
+    "fiat_tx": {
+      "message": "This details is available only for fiat payments"
+    }
+  }
+}
+```
+
+```json 201 - Pix → Crypto
+{
+  "statusCode": 201,
+  "success": true,
+  "status": "payment_registered",
+  "message": "Payment has been registered",
+  "data": {
+    "payment_id": "cmodhqf38000001pjju9kxlmb",
+    "session_payment": "https://app.starknode.io/sessions/payment?token=<jwt>",
+    "crypto_tx": "This details is available only for crypto payments",
+    "fiat_tx": {
+      "status": "ATIVA",
+      "pix_key": "3254cbd2-75e5-4034-abdb-ba8eebcee742",
+      "txid": "282910f46cb6420388c9887a",
+      "pixCopiaECola": "00020101021226790014br.gov.bcb.p03***63047A85",
+      "pix_qr_code_data_url": "data:image/png;base64,iVBORw0KGgo...",
+      "calendar": {
+        "criacao": "2026-04-24T19:37:30.608Z",
+        "expiracao": 3600
+      },
+      "code": 201
+    }
+  }
+}
+```
+
+```json 401 - Unauthorized
+{
+  "statusCode": 401,
+  "success": false,
+  "status": "unauthorized",
+  "message": "Invalid or missing API key."
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "validation_error",
+  "message": "Validation failed.",
+  "errors": [
+    {
+      "field": "payment_id",
+      "message": "payment_id is required."
+    }
+  ]
+}
+```
+
+</ResponseExample>
+
+### Response
+
+<ResponseField name="statusCode" type="number" required>
+  HTTP status code. Returns `201` on success.
+</ResponseField>
+
+<ResponseField name="success" type="boolean" required>
+  Whether the request succeeded.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+  Status label (e.g. `payment_registered`).
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  Human-readable response message.
+</ResponseField>
+
+<ResponseField name="data" type="object" required>
+  Transaction data payload.
+
+  <Expandable title="data">
+    <ResponseField name="payment_id" type="string" required>
+      Unique identifier for this payment. Use it to [check payment status](/starkpay) or [broadcast the transaction](/broadcast-transactions).
+    </ResponseField>
+
+    <ResponseField name="session_payment" type="string">
+      JWT-signed URL for the hosted payment session page.
+    </ResponseField>
+
+    <ResponseField name="crypto_tx" type="object | string">
+      Unsigned EVM or Solana transaction object ready for signing. Returns a message string for non-crypto payment types.
+
+      <Expandable title="crypto_tx (EVM)">
+        <ResponseField name="family" type="string">Transaction family (`evm` or `solana`).</ResponseField>
+        <ResponseField name="chain_name" type="string">Target chain (e.g. `arbitrum`).</ResponseField>
+        <ResponseField name="schema_version" type="number">Schema version.</ResponseField>
+        <ResponseField name="transactionRequest" type="object">
+          Raw EVM transaction params: `from`, `to`, `data`, `value`, `chainId`, `gasLimit`, `maxFeePerGas`, `maxPriorityFeePerGas`, `nonce`.
+        </ResponseField>
+        <ResponseField name="meta" type="object">
+          Internal metadata (e.g. `source: "evm_split"`).
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+
+    <ResponseField name="fiat_tx" type="object | string">
+      Fiat payment data (Pix QR code, key, txid). Returns a message string for crypto-only transactions.
+
+      <Expandable title="fiat_tx (Pix)">
+        <ResponseField name="status" type="string">Pix charge status (e.g. `ATIVA`).</ResponseField>
+        <ResponseField name="pix_key" type="string">Pix key (chave) for this charge.</ResponseField>
+        <ResponseField name="txid" type="string">Pix transaction ID.</ResponseField>
+        <ResponseField name="pixCopiaECola" type="string">Pix copy-and-paste code.</ResponseField>
+        <ResponseField name="pix_qr_code_data_url" type="string">Base64-encoded PNG QR code image ready to display.</ResponseField>
+        <ResponseField name="calendar" type="object">
+          Creation timestamp (`criacao`) and expiration in seconds (`expiracao`).
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Signing a transaction
+
+<Warning>
+  Direct on-chain submission is **not allowed** and may result in failure or rejection. All transactions must be signed locally and then submitted exclusively through the [Broadcast](/broadcast-transactions) endpoint.
+</Warning>
+
+After receiving `crypto_tx`, sign it with the user's wallet before broadcasting.
+
+<Tabs>
+  <Tab title="EVM (ethers.js)">
+    ```javascript
+    import { Wallet } from "ethers";
+
+    const privateKey = "YOUR_PRIVATE_KEY";
+    const wallet = new Wallet(privateKey);
+
+    const tx = {
+      from:                 "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+      to:                   "0x23183C87c9c6668edf5974893905AF475c3664c9",
+      data:                 "0x40180def...",
+      value:                0n,
+      chainId:              42161,
+      gasLimit:             82499n,
+      maxPriorityFeePerGas: 0n,
+      maxFeePerGas:         52514800n,
+      nonce:                36,
+      type:                 2,
+    };
+
+    const signedTx = await wallet.signTransaction(tx);
+    console.log("Signed transaction:", signedTx);
+    ```
+  </Tab>
+  <Tab title="Solana (web3.js)">
+    ```javascript
+    import { Connection, Transaction, Keypair } from "@solana/web3.js";
+
+    const connection = new Connection("https://api.mainnet-beta.solana.com");
+    const keypair = Keypair.fromSecretKey(secretKey);
+
+    // Reconstruct transaction from crypto_tx data
+    const transaction = Transaction.from(Buffer.from(crypto_tx.serialized, "base64"));
+    transaction.sign(keypair);
+
+    const signedTx = transaction.serialize().toString("base64");
+    console.log("Signed transaction:", signedTx);
+    ```
+  </Tab>
+</Tabs>
+
+<Tip>
+  You can use an external wallet provider like [Privy.io](https://privy.io) to sign transactions without exposing private keys. Never call `sendTransaction` directly — always go through the broadcast endpoint.
+</Tip>
+
+---
+
+## Card tokenization
+
+<Warning>
+  Use tokenization to avoid handling raw card data. This improves security and helps ensure PCI compliance.
+</Warning>
+
+**Endpoint:** `POST https://api.starknode.io/payment/card/tokenize`
+
+<ParamField body="type" type="string" required>
+  Payment type. Use `card`.
+</ParamField>
+
+<ParamField body="card" type="object" required>
+  Card details to tokenize.
+
+  <Expandable title="card">
+    <ParamField body="number" type="string" required>Card number.</ParamField>
+    <ParamField body="holder_name" type="string" required>Name of the card holder.</ParamField>
+    <ParamField body="holder_document" type="string" required>Card holder document number (CPF).</ParamField>
+    <ParamField body="exp_month" type="number" required>Expiration month (1–12).</ParamField>
+    <ParamField body="exp_year" type="number" required>Expiration year (e.g. `30` for 2030).</ParamField>
+    <ParamField body="cvv" type="string" required>Card security code.</ParamField>
+  </Expandable>
+</ParamField>
+
+**Tokenization response:**
+
+```json
+{
+  "id": "token_wxDE5l3uGofL5KzR",
+  "type": "card",
+  "created_at": "2026-04-25T17:32:22Z",
+  "expires_at": "2026-04-25T17:33:22Z",
+  "card": {
+    "first_six_digits": "400000",
+    "last_four_digits": "0010",
+    "holder_name": "Tony Stark",
+    "holder_document": "93095135270",
+    "exp_month": 1,
+    "exp_year": 30,
+    "brand": "Visa"
+  }
+}
+```
+
+Pass the returned `id` as `card_data.card_token` in the create transaction request.
+
+<Note>
+  Card payment support is currently limited to **CardCrypto**. Only one-time transactions are supported. Enablement requires a minimum lead time of 7 days and must be aligned in advance with the sales team. To use any payment method involving the traditional financial system (PIX, fiat, card), complete KYC/KYB procedures with the account management team.
+</Note>
