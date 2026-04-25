@@ -1,0 +1,120 @@
+---
+title: "Create transaction"
+description: "When an order is created, only the payment data and related information are registered — no transaction is generated at this stage.  After creation, use the provided endpoint to retrieve the user data required for payment. With this information, you can generate the unsigned transaction and proceed with payment via PIX or credit card."
+---
+
+<Info>
+  The transaction type defines the required and optional request parameters. Always validate the specified type before building the request.
+</Info>
+
+```shellscript
+POST /payment/register/intents-create-transaction
+```
+
+<Steps>
+  <Step title="Create a crypto transaction">
+    Create a crypto transaction to any token on any chain (ANY-TO-ANY)
+
+    | Parameter | Type | Required | Description |
+    | --- | --- | --- | --- |
+    | `payment_id` | string | ✅ | Payment id returned by register order endpoint |
+    | `payer_wallet` | string | ✅ | User public address |
+    | `payer_email` | string | ✅ | User email address |
+    | `chain_name` | string | ✅ | The chain name chosen by the user, referring to the chain for which they wish to pay (for example: `Solana`). |
+    | `payer_token_symbol` | string | ✅ | User's choice of token to pay for this transaction (e.g., `USDC, SOL, ETH`) |
+    | `transaction_type` | string | ✅ | Every transaction have a specific type. This is `crypto` |
+
+    #### Response Expected 
+
+    <CodeGroup>
+
+    ```json EVM expandable
+    {
+        "statusCode": 201,
+        "success": true,
+        "status": "payment_registered",
+        "message": "Payment has been registered",
+        "data": {
+            "session_payment": "https://lab-app.starknode.io/sessions/payment?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtb2RpNzhiMjAwMDEwMXBqZXpzdDFpY3MiLCJleGVjdXRvcl9pZCI6ImFwaV90cmFuc2FjdGlvbiIsIm9yZGVyX2NvZGUiOm51bGwsInRlbmFudF9kYXRhIjp7ImNvdW50cnkiOiJicmF6aWwiLCJwaXhfZW5hYmxlZCI6dHJ1ZSwid2ViaG9va191cmwiOiJodHRwczovL3dlYmhvb2suc2l0ZS85YWJkYzZhZC00OTU2LTRkOGMtYjRkNS0wNmVhZmZhMzBiY2UiLCJwdWJsaWNfY2xpZW50X2lkIjoiY21uZ3k2Nm13MDAwMGU2eTB1b3djYnhnZiIsImJhbmtfYWNjb3VudF9lbmFibGVkIjp0cnVlLCJwYXltZW50X21ldGhvZF9hbGxvd2VkIjp7ImNyeXB0byI6dHJ1ZSwiY2FyZGZpYXQiOnRydWUsInBpeGNyeXB0byI6dHJ1ZSwiY2FyZGNyeXB0byI6dHJ1ZX19LCJzdGF0dXMiOiJjcmVhdGluZ190cmFuc2FjdGlvbiIsInBheWVyX2VtYWlsIjoiZGV2LmNhaXF1ZWJlcmluZ3VpQGdtYWlsLmNvbSIsInBheWVyX3dhbGxldCI6IjB4OWI1Nzg0N2I2OUQwMzU0ODM3RjdiNzIzMTMzQjlkQkNiZWZiNEY5RiIsInBheWVyX3Rva2VuX3N5bWJvbCI6IlVTRFQiLCJ0cmFuc2FjdGlvbl90eXBlIjoiY3J5cHRvIiwicGF5ZXJfY3BmIjoiIiwidGlkX2hhc2giOm51bGwsIm1ldGFkYXRhIjpudWxsLCJzcGxpdF9wYXltZW50X2NvbmZpZyI6W3sicmVjZWl2ZXJfd2FsbGV0IjoiMHg5YjU3ODQ3YjY5RDAzNTQ4MzdGN2I3MjMxMzNCOWRCQ2JlZmI0RjlGIiwicmVjZWl2ZXJfcGVyY2VudCI6MTAwfV0sInN1YnNjcmlwdGlvbl9wYXltZW50X2NvbmZpZyI6bnVsbCwiZnJvbV9jdXJyZW5jeV9zeW1ib2wiOiJCUkwiLCJhbW91bnRfZnJvbSI6IjMwIiwiYW1vdW50X3RvIjoiMC4wNTk5NDQ4NTA3MzczMjE2NiIsIm5ldF9hbW91bnQiOnsibmV0X2Ftb3VudCI6MC4wNTg3NDU5NTM3MjI1NzUyMywiY29uc3VtZWRfZmVlIjoyfSwidG9fY3VycmVuY3lfc3ltYm9sIjoiVVNEVCIsImNoYWluX25hbWUiOiJhcmJpdHJ1bSIsImZyb21fY2hhaW4iOiJhcmJpdHJ1bSIsInRvX2NoYWluIjoiYXJiaXRydW0iLCJvbl9yYW1wIjpmYWxzZSwidW5zaWduZWRfdHgiOm51bGwsInNpZ25lZF90eCI6bnVsbCwiZ2xvYmFsX3BheW1lbnRfZGF0YSI6bnVsbCwiZGF0YV9lcnJvciI6eyJjb2RlIjoiaW52YWxpZF90cmFuc2FjdGlvbiIsInN0YXR1cyI6ImVycm9yIiwiZGV0YWlscyI6IkVycm9yOiBHYXMgZXN0aW1hdGlvbiBmYWlsZWQuIFRoZSB0cmFuc2FjdGlvbiB3b3VsZCByZXZlcnQgb24tY2hhaW4uIENhdXNlOiBleGVjdXRpb24gcmV2ZXJ0ZWQgUmV2ZXJ0IGRhdGE6IDB4OTRlNjgwOGEwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBmZDA4NmJjN2NkNWM0ODFkY2M5Yzg1ZWJlNDc4YTFjMGI2OWZjYmI5MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwYzk3NGE3NThjZTdjNGRkNTdhOWJlMWYwZTA0ZDA5ZjljODViZWI3YjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDliNTc4NDdiNjlkMDM1NDgzN2Y3YjcyMzEzM2I5ZGJjYmVmYjRmOWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMzIyIENvbnRyYWN0IGVycm9yOiBFUkMyMFRyYW5zZmVyRmFpbGVkLiBMaWtlbHkgY2F1c2VzOiBpbnN1ZmZpY2llbnQgdG9rZW4gYmFsYW5jZSBvciBpbnN1ZmZpY2llbnQgYWxsb3dhbmNlIGZvciB0aGUgZ2F0ZXdheSBjb250cmFjdC5cbiAgICBhdCBFVk1JbnRlcm5hbE1ldGhvZHMuR2VuZXJhdGVUeCAoL1VzZXJzL2NhaXF1ZS9kZXZlbG9wL1N0YXJrTm9kZS1TZXJ2ZXIvc3JjL2NsYXNzL0VWTUludGVybmFsTWV0aG9kcy5qczo4MDk6MjkpXG4gICAgYXQgcHJvY2Vzcy5wcm9jZXNzVGlja3NBbmRSZWplY3Rpb25zIChub2RlOmludGVybmFsL3Byb2Nlc3MvdGFza19xdWV1ZXM6MTA1OjUpXG4gICAgYXQgYXN5bmMgUGF5bWVudE1ldGhvZHMuX2J1aWxkVHJhbnNmZXJUeCAoL1VzZXJzL2NhaXF1ZS9kZXZlbG9wL1N0YXJrTm9kZS1TZXJ2ZXIvc3JjL2NsYXNzL1BheW1lbnRNZXRob2RzLmpzOjExNzQ6MjQpXG4gICAgYXQgYXN5bmMgYnVpbGRUcmFuc2FjdGlvbnNCeVR5cGUgKC9Vc2Vycy9jYWlxdWUvZGV2ZWxvcC9TdGFya05vZGUtU2VydmVyL3NyYy9jbGFzcy9QYXltZW50TWV0aG9kcy5qczoxMzEyOjIzKVxuICAgIGF0IGFzeW5jIFJlZ2lzdGVyUGF5bWVudFRyYW5zYWN0aW9uICgvVXNlcnMvY2FpcXVlL2RldmVsb3AvU3RhcmtOb2RlLVNlcnZlci9zcmMvY29udHJvbGxlci9QYXltZW50VjFDb250cm9sbGVyLmpzOjU0NTo0NCkiLCJtZXNzYWdlIjoiR2FzIGVzdGltYXRpb24gZmFpbGVkLiBUaGUgdHJhbnNhY3Rpb24gd291bGQgcmV2ZXJ0IG9uLWNoYWluLiBDYXVzZTogZXhlY3V0aW9uIHJldmVydGVkIFJldmVydCBkYXRhOiAweDk0ZTY4MDhhMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwZmQwODZiYzdjZDVjNDgxZGNjOWM4NWViZTQ3OGExYzBiNjlmY2JiOTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMGM5NzRhNzU4Y2U3YzRkZDU3YTliZTFmMGUwNGQwOWY5Yzg1YmViN2IwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA5YjU3ODQ3YjY5ZDAzNTQ4MzdmN2I3MjMxMzNiOWRiY2JlZmI0ZjlmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwZTMyMiBDb250cmFjdCBlcnJvcjogRVJDMjBUcmFuc2ZlckZhaWxlZC4gTGlrZWx5IGNhdXNlczogaW5zdWZmaWNpZW50IHRva2VuIGJhbGFuY2Ugb3IgaW5zdWZmaWNpZW50IGFsbG93YW5jZSBmb3IgdGhlIGdhdGV3YXkgY29udHJhY3QuIn0sInNlc3Npb25fcGF5bWVudCI6bnVsbCwid2ViaG9va19mb3J3YXJkZWQiOmZhbHNlLCJwYWdhcm1lX2NvbmZpZyI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjYtMDQtMjRUMjI6NTA6MTYuOTEwWiIsInVwZGF0ZWRfYXQiOiIyMDI2LTA0LTI0VDIyOjUxOjM5LjI2NloiLCJpYXQiOjE3NzcwNzExMDB9.21mL8u2M2cpki6umaFHlU2aCc8fhVrMEu2L711KtznU",
+            "payment_id": "cmodi78b2000101pjezst1ics",
+            "crypto_tx": {
+                "schema_version": 1,
+                "family": "evm",
+                "chain_name": "arbitrum",
+                "transactionRequest": {
+                    "from": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+                    "to": "0x23183C87c9c6668edf5974893905AF475c3664c9",
+                    "data": "0x40180def000000000000000000000000fd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb90000000000000000000000009b57847b69d0354837f7b723133b9dbcbefb4f9f000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000020000000000000000000000009b57847b69d0354837f7b723133b9dbcbefb4f9f0000000000000000000000001e659faad0181ab1a30891d99f69df115db77eef0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000e3220000000000000000000000000000000000000000000000000000000000000706",
+                    "value": 0,
+                    "chainId": 42161,
+                    "gasLimit": "82499",
+                    "maxPriorityFeePerGas": "0",
+                    "maxFeePerGas": "52514800",
+                    "nonce": 36
+                },
+                "meta": {
+                    "source": "evm_split"
+                }
+            },
+            "fiat_tx": {
+                "message": "This details is available only for fiat payments"
+            }
+        }
+    }
+    ```
+
+    ```text Solana
+    ```
+
+    </CodeGroup>
+  </Step>
+</Steps>
+
+<CodeGroup>
+
+```typescript EVM expandable
+import { Wallet } from "ethers";
+
+const privateKey = "SUA_PRIVATE_KEY_AQUI";
+const wallet = new Wallet(privateKey);
+
+const tx = {
+  from:                 "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+  to:                   "0x23183C87c9c6668edf5974893905AF475c3664c9",
+  data:                 "0x40180def000000000000000000000000fd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb90000000000000000000000009b57847b69d0354837f7b723133b9dbcbefb4f9f000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000020000000000000000000000009b57847b69d0354837f7b723133b9dbcbefb4f9f0000000000000000000000001e659faad0181ab1a30891d99f69df115db77eef0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000e3220000000000000000000000000000000000000000000000000000000000000706",
+  value:                0n,
+  chainId:              42161,
+  gasLimit:             82499n,
+  maxPriorityFeePerGas: 0n,
+  maxFeePerGas:         52514800n,
+  nonce:                36,
+  type:                 2,
+};
+
+const signedTx = await wallet.signTransaction(tx);
+console.log("Transação assinada:", signedTx);
+```
+
+```typescript Solana
+import { Keypair, Transaction } from "@solana/web3.js";
+import bs58 from "bs58";
+
+const privateKeyBase58 = "SUA_PRIVATE_KEY_BASE58_AQUI";
+const keypair = Keypair.fromSecretKey(bs58.decode(privateKeyBase58));
+
+// Tx serialized (wire format base64) returned by API Response
+const wireBase64 = `AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAGCttm371bWToa9QKOXo5KlPPMPULltp5K1MsY2z3EYpYMIe`;
+
+// 1. Deserializa os bytes
+const txBytes = Buffer.from(wireBase64, "base64");
+const tx = Transaction.from(txBytes);
+
+// 2. Assina (preenche a assinatura no slot vazio)
+tx.sign(keypair);
+
+// 3. Serializa de volta para base64 (agora com assinatura)
+const signedTx = tx.serialize().toString("base64");
+console.log("Transação assinada:", signedTx);
+```
+
+</CodeGroup>

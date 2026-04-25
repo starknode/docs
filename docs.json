@@ -29,7 +29,8 @@
                 "group": "StarkPay",
                 "pages": [
                   "starkpay",
-                  "create-transactions"
+                  "register-order-trasanction",
+                  "create-transaction"
                 ]
               },
               {
