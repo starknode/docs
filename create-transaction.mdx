@@ -229,5 +229,80 @@ console.log("Signed transaction:", signedTx);
     | `card_data.card.exp_year` | number | ✅ | Card expiration year (e.g. `2030`) |
     | `card_data.card.cvv` | string | ✅ | Card security code |
     | `card_data.card.brand` | string | ✅ | Card brand (e.g. `Visa`, `Mastercard`) |
+
+    <Info>
+      Card payment support is currently limited to the **CardCrypto** method.  This method has specific operational rules and limits that must be aligned in advance with the sales team.
+
+      Only one-time transactions are currently supported. The enablement process has a minimum lead time of 7 days and may vary depending on regulatory requirements and jurisdiction.
+    </Info>
+
+    <Accordion title="🚨   Security tips">
+      Use the tokenization endpoint to process card data, avoiding the direct handling and storage of sensitive card information.  Tokenization provides a higher level of security and helps ensure compliance with regulatory requirements.
+
+      ```shellscript
+      POST https://api.starkfi.io/payment/card/tokenize
+      ```
+
+      | Parameter | Type | Required | Description |
+      | --- | --- | --- | --- |
+      | `type` | string | ✅ | Payment type. Use `card` for card payments |
+      | `card` | object | ✅ | Card details object |
+      | `card.number` | string | ✅ | Card number |
+      | `card.holder_name` | string | ✅ | Name of the card holder |
+      | `card.holder_document` | string | ✅ | Card holder document number (CPF) |
+      | `card.exp_month` | number | ✅ | Card expiration month (1–12) |
+      | `card.exp_year` | number | ✅ | Card expiration year (e.g. `30` for 2030) |
+      | `card.cvv` | string | ✅ | Card security code |
+
+      #### Response expected
+
+      ```json
+      {
+          "id": "token_wxDE5l3uGofL5KzR",
+          "type": "card",
+          "created_at": "2026-04-25T17:32:22Z",
+          "expires_at": "2026-04-25T17:33:22Z",
+          "card": {
+              "first_six_digits": "400000",
+              "last_four_digits": "0010",
+              "holder_name": "Tony Stark",
+              "holder_document": "93095135270",
+              "exp_month": 1,
+              "exp_year": 30,
+              "brand": "Visa"
+          }
+      }
+      ```
+
+      When using tokenized card data, the payment request payload must follow the structure below:
+
+      | Parameter | Type | Required | Description |
+      | --- | --- | --- | --- |
+      | `payment_id` | string | ✅ | Unique payment identifier generated in the previous step |
+      | `transaction_type` | string | ✅ | Transaction type (e.g. `cardcrypto`, `cardfiat`, `pixcrypto`) |
+      | `payer_name` | string | ✅ | Full name of the payer |
+      | `payer_email` | string | ✅ | Payer's email address |
+      | `payer_document` | string | ✅ | Payer's document number |
+      | `payer_document_type` | string | ✅ | Document type (e.g. `cpf`) |
+      | `payer_phone` | object | ✅ | Payer's phone details |
+      | `payer_phone.country_code` | string | ✅ | Country code (e.g. `55` for Brazil) |
+      | `payer_phone.area_code` | string | ✅ | Area code (e.g. `11`) |
+      | `payer_phone.number` | string | ✅ | Phone number |
+      | `payer_ip` | string | ✅ | Payer's IP address |
+      | `session_id` | string | ✅ | Session identifier for fraud prevention |
+      | `card_data` | object | ✅ | Card payment details |
+      | `card_data.installments` | number | ✅ | Number of installments (e.g. `1` for single payment) |
+      | `card_data.statement_descriptor` | string | ✅ | Text that appears on the payer's card statement |
+      | `card_data.card_token` | string | ✅ | Tokenized card identifier from the previous step |
+      | `card_data.address` | object | ✅ | Billing address |
+      | `card_data.address.country` | string | ✅ | Country code (e.g. `BR`) |
+      | `card_data.address.state` | string | ✅ | State code (e.g. `SP`) |
+      | `card_data.address.city` | string | ✅ | City name |
+      | `card_data.address.neighborhood` | string | ✅ | Neighborhood name |
+      | `card_data.address.street` | string | ✅ | Street name |
+      | `card_data.address.street_number` | string | ✅ | Street number |
+      | `card_data.address.zipcode` | string | ✅ | ZIP/postal code |
+      | `card_data.address.complement` | string |  | Address complement (e.g. apartment number) |
+    </Accordion>
   </Step>
 </Steps>
