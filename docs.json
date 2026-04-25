@@ -55,9 +55,8 @@
           },
           {
             "group": "StarkPay",
-            "openapi": "api-reference/openapi.json",
             "pages": [
-              "api-reference/endpoint/get"
+              "check-payment-info"
             ]
           }
         ]
