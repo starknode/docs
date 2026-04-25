@@ -63,12 +63,40 @@ POST /payment/register/intents-create-transaction
     }
     ```
 
-    ```text Solana
+    ```json Solana expandable
+    {
+        "statusCode": 201,
+        "success": true,
+        "status": "payment_registered",
+        "message": "Payment has been registered",
+        "data": {
+            "session_payment": "https://lab-app.starknode.io/sessions/payment?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtb2R2aDVsNzAwMDEwMW55ZmdzMG9weDMiLCJleGVjdXRvcl9pZCI6ImFwaV90cmFuc2FjdGlvbiIsIm9yZGVyX2NvZGUiOm51bGwsInRlbmFudF9kYXRhIjp7ImNvdW50cnkiOiJicmF6aWwiLCJwaXhfZW5hYmxlZCI6dHJ1ZSwid2ViaG9va191cmwiOiJodHRwczovL3dlYmhvb2suc2l0ZS85N2I1MTQyYS0xY2I3LTQxNDItODMwNi0zZDk4YTkzZTlhNzkiLCJwdWJsaWNfY2xpZW50X2lkIjoiY21uZ3k2Nm13MDAwMGU2eTB1b3djYnhnZiIsImJhbmtfYWNjb3VudF9lbmFibGVkIjp0cnVlLCJwYXltZW50X21ldGhvZF9hbGxvd2VkIjp7ImNyeXB0byI6dHJ1ZSwiY2FyZGZpYXQiOnRydWUsInBpeGNyeXB0byI6dHJ1ZSwiY2FyZGNyeXB0byI6dHJ1ZX19LCJzdGF0dXMiOiJjcmVhdGluZ190cmFuc2FjdGlvbiIsInBheWVyX2VtYWlsIjoiZGV2LmNhaXF1ZWJlcmluZ3VpQGdtYWlsLmNvbSIsInBheWVyX3dhbGxldCI6IkZtVEdZcHpYMjdmRHFhaXl0WFVkRlZhcGhDNW82OEc2MVEzdWhWTTJkOGJtIiwicGF5ZXJfdG9rZW5fc3ltYm9sIjoiVVNEVCIsInRyYW5zYWN0aW9uX3R5cGUiOiJjcnlwdG8iLCJwYXllcl9jcGYiOiIiLCJ0aWRfaGFzaCI6bnVsbCwibWV0YWRhdGEiOm51bGwsInNwbGl0X3BheW1lbnRfY29uZmlnIjpbeyJyZWNlaXZlcl93YWxsZXQiOiJGbVRHWXB6WDI3ZkRxYWl5dFhVZEZWYXBoQzVvNjhHNjFRM3VoVk0yZDhibSIsInJlY2VpdmVyX3BlcmNlbnQiOjEwMH1dLCJzdWJzY3JpcHRpb25fcGF5bWVudF9jb25maWciOm51bGwsImZyb21fY3VycmVuY3lfc3ltYm9sIjoiQlJMIiwiYW1vdW50X2Zyb20iOiIzMCIsImFtb3VudF90byI6IjAuMDU5OTE3MzE0MTA2NTMyOTgiLCJuZXRfYW1vdW50Ijp7Im5ldF9hbW91bnQiOjAuMDU4NzE4OTY3ODI0NDAyMzIsImNvbnN1bWVkX2ZlZSI6Mn0sInRvX2N1cnJlbmN5X3N5bWJvbCI6IlVTRFQiLCJjaGFpbl9uYW1lIjoic29sYW5hIiwiZnJvbV9jaGFpbiI6InNvbGFuYSIsInRvX2NoYWluIjoic29sYW5hIiwib25fcmFtcCI6ZmFsc2UsInVuc2lnbmVkX3R4IjpudWxsLCJzaWduZWRfdHgiOm51bGwsImdsb2JhbF9wYXltZW50X2RhdGEiOm51bGwsImRhdGFfZXJyb3IiOnsiY29kZSI6ImludmFsaWRfdHJhbnNhY3Rpb24iLCJzdGF0dXMiOiJlcnJvciIsImRldGFpbHMiOiJFcnJvcjogYnVpbGRfc3BsaXRfc29sYW5hX3R4X2ZhaWxlZFxuICAgIGF0IGJ1aWxkVHJhbnNhY3Rpb25zQnlUeXBlICgvVXNlcnMvY2FpcXVlL2RldmVsb3AvU3RhcmtOb2RlLVNlcnZlci9zcmMvY2xhc3MvUGF5bWVudE1ldGhvZHMuanM6MTMxNToyNylcbiAgICBhdCBwcm9jZXNzLnByb2Nlc3NUaWNrc0FuZFJlamVjdGlvbnMgKG5vZGU6aW50ZXJuYWwvcHJvY2Vzcy90YXNrX3F1ZXVlczoxMDM6NSlcbiAgICBhdCBhc3luYyBSZWdpc3RlclBheW1lbnRUcmFuc2FjdGlvbiAoL1VzZXJzL2NhaXF1ZS9kZXZlbG9wL1N0YXJrTm9kZS1TZXJ2ZXIvc3JjL2NvbnRyb2xsZXIvUGF5bWVudFYxQ29udHJvbGxlci5qczo1NDU6NDQpIiwibWVzc2FnZSI6ImJ1aWxkX3NwbGl0X3NvbGFuYV90eF9mYWlsZWQifSwic2Vzc2lvbl9wYXltZW50IjpudWxsLCJ3ZWJob29rX2ZvcndhcmRlZCI6dHJ1ZSwicGFnYXJtZV9jb25maWciOm51bGwsImNyZWF0ZWRfYXQiOiIyMDI2LTA0LTI1VDA1OjAxOjU0Ljk1NVoiLCJ1cGRhdGVkX2F0IjoiMjAyNi0wNC0yNVQwNTowMjo1NS40NTdaIiwiaWF0IjoxNzc3MDkzMzc2fQ.pb1iaqO7EjwLDrCO7_NhvHc24AE9UakTkvqIj3Qi2nw",
+            "payment_id": "cmodvh5l7000101nyfgs0opx3",
+            "crypto_tx": {
+                "schema_version": 1,
+                "family": "solana",
+                "chain_name": "solana",
+                "transactionRequest": {
+                    "data": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAEBttm371bWToa9QKOXo5KlPPMPULltp5K1MsY2z3EYpYM4lpesQRHg7J5DUQjTvzAUtih+p8dZ1dEBpm1DSEkVewAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZzgEOYK/tsicXvWMZL1QUWj+WWjO7gtLHAp6yzh4ggmQG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqRC/T5jJwSXV8TMkbzjOoqiD1Y9eJjbio512iw09evSVBAMGAAEABAIFAQEFAwEBAAkDCOMAAAAAAAADBgABAAQCBQEBBQMBAQAJAwUHAAAAAAAAAA=="
+                },
+                "meta": {
+                    "source": "solana_split"
+                }
+            },
+            "fiat_tx": {
+                "message": "This details is available only for fiat payments"
+            }
+        }
+    }
     ```
 
     </CodeGroup>
   </Step>
 </Steps>
+
+### How can you sign a transaction?
+
+This example illustrates the mandatory transaction submission flow. Direct submission is not allowed and may result in failure or rejection. All transactions must be submitted exclusively through the API’s broadcast service, which is responsible for validating, propagating, and processing requests.
 
 <CodeGroup>
 
@@ -95,26 +123,30 @@ const signedTx = await wallet.signTransaction(tx);
 console.log("Transação assinada:", signedTx);
 ```
 
-```typescript Solana
+```typescript Solana expandable
 import { Keypair, Transaction } from "@solana/web3.js";
 import bs58 from "bs58";
 
-const privateKeyBase58 = "SUA_PRIVATE_KEY_BASE58_AQUI";
+const privateKeyBase58 = "YOUR_PRIVATE_KEY_BASE58_HERE";
 const keypair = Keypair.fromSecretKey(bs58.decode(privateKeyBase58));
 
-// Tx serialized (wire format base64) returned by API Response
+// Serialized tx (wire format base64) returned by API response
 const wireBase64 = `AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAGCttm371bWToa9QKOXo5KlPPMPULltp5K1MsY2z3EYpYMIe`;
 
-// 1. Deserializa os bytes
+// 1. Deserialize bytes
 const txBytes = Buffer.from(wireBase64, "base64");
 const tx = Transaction.from(txBytes);
 
-// 2. Assina (preenche a assinatura no slot vazio)
+// 2. Sign (fills the empty signature slot with ed25519 signature)
 tx.sign(keypair);
 
-// 3. Serializa de volta para base64 (agora com assinatura)
+// 3. Serialize back to base64 (now with signature)
 const signedTx = tx.serialize().toString("base64");
-console.log("Transação assinada:", signedTx);
+console.log("Signed transaction:", signedTx);
 ```
 
 </CodeGroup>
+
+<Info>
+  You may use an external wallet connection provider, such as [Privy.io](https://privy.io), to interact with the user’s wallet and sign the transaction.  However, never send the transaction directly using methods like `sendTransaction`. The transaction must only be signed and then submitted to the API’s broadcast endpoint.
+</Info>
