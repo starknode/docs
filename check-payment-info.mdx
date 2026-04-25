@@ -12,7 +12,7 @@ description: "Retrieve the current status and full details of a payment transact
 ```bash cURL
 curl --request GET \
   --url https://api.starknode.io/payment/cmodi78b2000101pjezst1ics/status \
-  --header 'Authorization: Bearer <token>'
+  --header 'x-api-key: <api_key>'
 ```
 
 ```javascript Node.js
@@ -21,7 +21,7 @@ const response = await fetch(
   {
     method: "GET",
     headers: {
-      Authorization: "Bearer <token>",
+      "x-api-key": "<api_key>",
     },
   }
 );
@@ -34,7 +34,7 @@ import requests
 
 response = requests.get(
     "https://api.starknode.io/payment/cmodi78b2000101pjezst1ics/status",
-    headers={"Authorization": "Bearer <token>"},
+    headers={"x-api-key": "<api_key>"},
 )
 
 data = response.json()
