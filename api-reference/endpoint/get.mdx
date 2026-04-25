@@ -1,4 +1,402 @@
 ---
-title: 'Get Plants'
-openapi: 'GET /plants'
+title: "Check payment info"
+openapi: "GET /plants"
 ---
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the payment transaction.
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl --request GET \
+  --url https://api.starknode.io/payment/cmodi78b2000101pjezst1ics/status \
+  --header 'Authorization: Bearer <token>'
+```
+
+```javascript Node.js
+const response = await fetch(
+  "https://api.starknode.io/payment/cmodi78b2000101pjezst1ics/status",
+  {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer <token>",
+    },
+  }
+);
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.starknode.io/payment/cmodi78b2000101pjezst1ics/status",
+    headers={"Authorization": "Bearer <token>"},
+)
+
+data = response.json()
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 - Crypto Payment (error)
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "payment_found",
+  "message": "Payment found.",
+  "data": {
+    "id": "cmodi78b2000101pjezst1ics",
+    "status": "error",
+    "executor_id": "api_transaction",
+    "order_code": null,
+    "transaction_type": "crypto",
+    "payer_email": "satoshi@starkfi.io",
+    "payer_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+    "payer_token_symbol": "USDT",
+    "payer_cpf": null,
+    "tid_hash": null,
+    "from_currency_symbol": "BRL",
+    "amount_from": "30",
+    "amount_to": "0.05994485073732166",
+    "to_currency_symbol": "USDT",
+    "chain_name": "arbitrum",
+    "from_chain": "arbitrum",
+    "to_chain": "arbitrum",
+    "on_ramp": false,
+    "split_payment_config": [
+      {
+        "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+        "receiver_percent": 100
+      }
+    ],
+    "unsigned_tx": {
+      "family": "evm",
+      "chain_name": "arbitrum",
+      "schema_version": 1,
+      "transactionRequest": {
+        "to": "0x23183C87c9c6668edf5974893905AF475c3664c9",
+        "from": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+        "nonce": 36,
+        "value": 0,
+        "chainId": 42161,
+        "gasLimit": "82499",
+        "maxFeePerGas": "52514800",
+        "maxPriorityFeePerGas": "0"
+      }
+    },
+    "signed_tx": null,
+    "global_payment_data": {
+      "message": "This details is available only for fiat payments"
+    },
+    "data_error": {
+      "code": "invalid_payment_status",
+      "status": "error",
+      "details": null,
+      "message": "Payment transaction is not in a valid status for execution"
+    },
+    "metadata": null,
+    "created_at": "2026-04-24T22:50:16.910Z",
+    "updated_at": "2026-04-24T22:56:40.108Z"
+  }
+}
+```
+
+```json 200 - Pix → Crypto (success)
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "payment_found",
+  "message": "Payment found.",
+  "data": {
+    "id": "cmodhqf38000001pjju9kxlmb",
+    "status": "success",
+    "executor_id": "api_transaction",
+    "order_code": null,
+    "transaction_type": "pixcrypto",
+    "payer_email": "satoshi@starkfi.io",
+    "payer_wallet": "",
+    "payer_token_symbol": null,
+    "payer_cpf": "***.***.***-25",
+    "tid_hash": "0x3d1dc00ae7cb7bebecd395a264e6656604fdfebb9d1fd7d1bf291601ba31e643",
+    "from_currency_symbol": "BRL",
+    "amount_from": "30",
+    "amount_to": "0.05992928344553427",
+    "to_currency_symbol": "USDT",
+    "chain_name": "arbitrum",
+    "from_chain": "arbitrum",
+    "to_chain": "arbitrum",
+    "on_ramp": false,
+    "split_payment_config": [
+      {
+        "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+        "receiver_percent": 100
+      }
+    ],
+    "unsigned_tx": null,
+    "signed_tx": null,
+    "global_payment_data": {
+      "status": "paid",
+      "confirmed_at": "24/04/2026, 19:39:15",
+      "crypto_payment_details": {
+        "chain_name": "Arbitrum",
+        "amount_usdt": "0.05778",
+        "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+        "transaction_hash": "0x5d1b672614fb49e36791b89ce63ba2b0e36815e2455c6f3df13a658dd19bcdaa"
+      }
+    },
+    "data_error": null,
+    "metadata": null,
+    "created_at": "2026-04-24T22:37:12.548Z",
+    "updated_at": "2026-04-24T22:39:32.225Z"
+  }
+}
+```
+
+```json 200 - Card → Crypto (registered)
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "payment_found",
+  "message": "Payment found.",
+  "data": {
+    "id": "cmodmglpw000101o4sucrw1s0",
+    "status": "registered",
+    "executor_id": "api_transaction",
+    "order_code": null,
+    "transaction_type": "cardcrypto",
+    "payer_email": "john.smith.test+pay@example.com",
+    "payer_wallet": "",
+    "payer_token_symbol": null,
+    "payer_cpf": null,
+    "tid_hash": null,
+    "from_currency_symbol": "BRL",
+    "amount_from": "30",
+    "amount_to": "0.05994005994005994",
+    "to_currency_symbol": "USDT",
+    "chain_name": "arbitrum",
+    "from_chain": "arbitrum",
+    "to_chain": "arbitrum",
+    "on_ramp": false,
+    "split_payment_config": [
+      {
+        "receiver_wallet": "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+        "receiver_percent": 100
+      }
+    ],
+    "unsigned_tx": null,
+    "signed_tx": null,
+    "global_payment_data": {
+      "status": "failed",
+      "amount": 30,
+      "currency": "BRL",
+      "charges": [
+        {
+          "status": "failed",
+          "payment_method": "credit_card",
+          "last_transaction": {
+            "status": "failed",
+            "success": false,
+            "gateway_response": {
+              "code": "400",
+              "errors": [
+                { "message": "invalid_parameter | amount | valor não permitido" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "data_error": null,
+    "metadata": null,
+    "created_at": "2026-04-25T00:49:32.660Z",
+    "updated_at": "2026-04-25T00:49:46.583Z"
+  }
+}
+```
+
+</ResponseExample>
+
+### Response
+
+<ResponseField name="statusCode" type="number" required>
+  HTTP status code.
+</ResponseField>
+
+<ResponseField name="success" type="boolean" required>
+  Whether the request succeeded.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+  Status label for the response (e.g. `payment_found`).
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  Human-readable response message.
+</ResponseField>
+
+<ResponseField name="data" type="object" required>
+  The full payment transaction object.
+
+  <Expandable title="data">
+    <ResponseField name="id" type="string" required>
+      Unique payment ID.
+    </ResponseField>
+
+    <ResponseField name="status" type="enum<string>" required>
+      Current payment status. Available options: `success`, `error`, `pending`, `reproved`, `registered`
+    </ResponseField>
+
+    <ResponseField name="executor_id" type="string" required>
+      ID of the executor that initiated the transaction.
+    </ResponseField>
+
+    <ResponseField name="order_code" type="string | null">
+      Merchant order reference code.
+    </ResponseField>
+
+    <ResponseField name="transaction_type" type="enum<string>" required>
+      Payment method used. Available options: `crypto`, `pixcrypto`, `cardcrypto`, `cardfiat`
+    </ResponseField>
+
+    <ResponseField name="payer_email" type="string" required>
+      Payer's email address.
+    </ResponseField>
+
+    <ResponseField name="payer_wallet" type="string">
+      Payer's blockchain wallet address. Empty for fiat-only transactions.
+    </ResponseField>
+
+    <ResponseField name="payer_token_symbol" type="string | null">
+      Token used by the payer (e.g. `USDT`). `null` for fiat payments.
+    </ResponseField>
+
+    <ResponseField name="payer_cpf" type="string | null">
+      Masked CPF (Brazilian tax ID). Present only for `pixcrypto` transactions.
+    </ResponseField>
+
+    <ResponseField name="tid_hash" type="string | null">
+      On-chain transaction hash after successful execution.
+    </ResponseField>
+
+    <ResponseField name="from_currency_symbol" type="string" required>
+      Source currency symbol (e.g. `BRL`).
+    </ResponseField>
+
+    <ResponseField name="amount_from" type="string" required>
+      Amount in the source currency.
+    </ResponseField>
+
+    <ResponseField name="to_currency_symbol" type="string" required>
+      Target currency symbol (e.g. `USDT`).
+    </ResponseField>
+
+    <ResponseField name="amount_to" type="string" required>
+      Amount in the target currency.
+    </ResponseField>
+
+    <ResponseField name="chain_name" type="string" required>
+      Destination blockchain network (e.g. `arbitrum`).
+    </ResponseField>
+
+    <ResponseField name="from_chain" type="string" required>
+      Source blockchain network.
+    </ResponseField>
+
+    <ResponseField name="to_chain" type="string" required>
+      Target blockchain network.
+    </ResponseField>
+
+    <ResponseField name="on_ramp" type="boolean" required>
+      Whether this is an on-ramp transaction.
+    </ResponseField>
+
+    <ResponseField name="split_payment_config" type="array">
+      Split payment recipients.
+
+      <Expandable title="split_payment_config[]">
+        <ResponseField name="receiver_wallet" type="string" required>
+          Recipient wallet address.
+        </ResponseField>
+
+        <ResponseField name="receiver_percent" type="number" required>
+          Percentage allocated to this recipient (0–100).
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+
+    <ResponseField name="unsigned_tx" type="object | null">
+      Prepared EVM transaction, ready for signing. Present only for `crypto` type.
+
+      <Expandable title="unsigned_tx">
+        <ResponseField name="family" type="string">
+          Transaction family (e.g. 
+          `evm`
+          ).
+        </ResponseField>
+         <ResponseField name="chain_name" type="string">
+          Target chain.
+        </ResponseField>
+         <ResponseField name="schema_version" type="number">
+          Schema version.
+        </ResponseField>
+
+        <ResponseField name="transactionRequest" type="object">
+          Raw transaction params: `to`, `from`, `data`, `nonce`, `value`, `chainId`, `gasLimit`, `maxFeePerGas`, `maxPriorityFeePerGas`.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+
+    <ResponseField name="signed_tx" type="string | null">
+      Signed transaction payload. `null` until submitted.
+    </ResponseField>
+
+    <ResponseField name="global_payment_data" type="object | null">
+      Provider-specific payment data. Structure varies by `transaction_type`:
+
+      - `crypto` — static message string
+      - `pixcrypto` — Pix charge object \+ `crypto_payment_details`
+      - `cardcrypto` / `cardfiat` — card processor order, charges, and customer objects
+    </ResponseField>
+
+    <ResponseField name="data_error" type="object | null">
+      Error details when `status` is `error`.
+
+      <Expandable title="data_error">
+        <ResponseField name="code" type="string">
+          Machine-readable error code.
+        </ResponseField>
+         <ResponseField name="status" type="string">
+          Error status label.
+        </ResponseField>
+         <ResponseField name="message" type="string">
+          Human-readable error message.
+        </ResponseField>
+         <ResponseField name="details" type="string | null">
+          Extended details or stack trace.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+
+    <ResponseField name="session_payment" type="string">
+      JWT-signed URL for the hosted payment session page.
+    </ResponseField>
+
+    <ResponseField name="metadata" type="object | null">
+      Arbitrary metadata attached at payment creation.
+    </ResponseField>
+
+    <ResponseField name="created_at" type="string" required>
+      ISO 8601 creation timestamp.
+    </ResponseField>
+
+    <ResponseField name="updated_at" type="string" required>
+      ISO 8601 last-updated timestamp.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
