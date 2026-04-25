@@ -150,3 +150,16 @@ console.log("Signed transaction:", signedTx);
 <Info>
   You may use an external wallet connection provider, such as [Privy.io](https://privy.io), to interact with the user’s wallet and sign the transaction.  However, never send the transaction directly using methods like `sendTransaction`. The transaction must only be signed and then submitted to the API’s broadcast endpoint.
 </Info>
+
+<Steps>
+  <Step title="Create an on-ramp transaction" icon="2">
+    Create an on-ramp transaction for fiat payment
+
+    | Parameter | Type | Required | Description |
+    | :-- | :-- | :-- | :-- |
+    | `payment_id` | string | ✅ | Payment id returned by register order endpoint |
+    | payer\_cpf | string | ✅ | User cpf/cnpj |
+    | payer\_email | string | ✅ | User email address |
+    | transaction\_type | string | ✅ | pixcrypto or fiatcrypto |
+  </Step>
+</Steps>
