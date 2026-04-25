@@ -152,7 +152,7 @@ console.log("Signed transaction:", signedTx);
 </Info>
 
 <Steps>
-  <Step title="Create an on-ramp transaction" icon="2">
+  <Step title="Create an on-ramp transaction" stepNumber={2}>
     Create an on-ramp transaction for fiat payment
 
     | Parameter | Type | Required | Description |
@@ -160,7 +160,7 @@ console.log("Signed transaction:", signedTx);
     | `payment_id` | string | ✅ | Payment id returned by register order endpoint |
     | `payer_cpf` | string | ✅ | User cpf/cnpj |
     | `payer_email` | string | ✅ | User email address |
-    | `transaction_type` | string | ✅ | pixcrypto or fiatcrypto |
+    | `transaction_type` | string | ✅ | `pixcrypto` or `fiatcrypto` |
 
     #### Response Expected
 
@@ -193,5 +193,41 @@ console.log("Signed transaction:", signedTx);
     <Info>
       With the required data in hand, simply display the payment QR code so the user can scan it using their banking app and complete the payment.  From that point on, our backend automatically monitors the transaction status and, once confirmed, delivers the crypto assets directly to the registered wallet.
     </Info>
+  </Step>
+  <Step title="Create a credit card transaction" stepNumber={3}>
+    Create a credit card transaction
+
+    | Parameter | Type | Required | Description |
+    | :-- | :-- | :-- | :-- |
+    | `payment_id` | string | ✅ | Payment id returned by register order endpoint |
+    | `transaction_type` | string | ✅ | `cardcrypto` or `cardfiat` |
+    | `payer_email` | string | ✅ | User email address |
+    | `payer_name` | string | ✅ | User full name |
+    | `payer_document` | string | ✅ | User document number |
+    | `payer_document_type` | string | ✅ | `PASSPORT`, `CPF` or `CNPJ` |
+    | `payer_phone` | object | ✅ | Payer phone is a structure as user provide phone data |
+    | `payer_phone.country_code` | string | ✅ | Country code (e.g. `55`) Brazil code number |
+    | `payer_phone.area_code` | string | ✅ | DDD (e.g. `11`) São Paulo code number |
+    | `payer_phone.number` | string | ✅ | User phone number |
+    | `card_data` | object | ✅ | Card payment configuration object |
+    | `card_data.installments` | number | ✅ | Number of installments (e.g., 1 for a one-time payment ).<br />Currently, only one-time payment are available. |
+    | `card_data.statement_descriptor` | string | ✅ | Label that appears on the user's card statement |
+    | `card_data.address` | object | ✅ | Billing address for the card |
+    | `card_data.address.country` | string | ✅ | Country code (e.g. `USA`, `BRA`) |
+    | `card_data.address.state` | string | ✅ | State or province (e.g. `CA`, `SP`) |
+    | `card_data.address.city` | string | ✅ | City name |
+    | `card_data.address.neighborhood` | string | ✅ | Neighborhood or district |
+    | `card_data.address.street` | string | ✅ | Street name |
+    | `card_data.address.street_number` | string | ✅ | Street number |
+    | `card_data.address.zipcode` | string | ✅ | Zip or postal code (numbers only) |
+    | `card_data.address.complement` | string | ❌ | Additional address info (e.g. `Apt 4B`) |
+    | `card_data.card` | object | ✅ | Card details object |
+    | `card_data.card.number` | string | ✅ | Card number (e.g. `4111111111111111`) |
+    | `card_data.card.holder_name` | string | ✅ | Name printed on the card |
+    | `card_data.card.holder_document` | string | ✅ | Card holder document number |
+    | `card_data.card.exp_month` | number | ✅ | Card expiration month (e.g. `12`) |
+    | `card_data.card.exp_year` | number | ✅ | Card expiration year (e.g. `2030`) |
+    | `card_data.card.cvv` | string | ✅ | Card security code |
+    | `card_data.card.brand` | string | ✅ | Card brand (e.g. `Visa`, `Mastercard`) |
   </Step>
 </Steps>
