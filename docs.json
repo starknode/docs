@@ -37,7 +37,8 @@
               {
                 "group": "Orders",
                 "pages": [
-                  "untitled-page"
+                  "create-orders",
+                  "list-orders"
                 ]
               }
             ]
