@@ -1,5 +1,5 @@
 ---
-title: "Create orders"
+title: "Create order"
 description: "Instead of creating a new order request every time with varying parameters, you can define a preconfigured (fixed) order with all required values and settings already established. This approach allows you to reuse the same order structure, reducing complexity and avoiding repeated request construction. When initiating a payment, you simply need to send the order ID to the /payment/register/intents-create-order endpoint, which will reference the predefined configuration. "
 ---
 
@@ -44,7 +44,7 @@ POST /order/create
     | `split_payment_config[].receiver_percent` | number | ✅ | Percentage of the payment this wallet receives (0–100) |
   </Step>
   <Step title="Request example">
-    ```shellscript
+    ```shellscript expandable
     curl --request POST \
       --url https://api.starkfi.io/order/create \
       --header 'Content-Type: application/json' \

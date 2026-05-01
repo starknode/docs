@@ -1,0 +1,49 @@
+---
+title: "Disable/Enable order"
+---
+
+When an order is disabled, it can no longer be processed in our transaction system. Therefore, if it is being used in a checkout or for a specific one-time charge, the payer will not be able to complete it.
+
+<Steps>
+  <Step title="Disable or Enable order">
+    Make one request to control the state
+
+    ```shellscript expandable
+    curl --request POST \
+      --url https://api.starkfi.io/payment/register/intents-create-order \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+    ```
+
+    <Tabs>
+      <Tab title="Deactivated response">
+        ```json
+        {
+            "statusCode": 200,
+            "success": true,
+            "status": "order_deactivated",
+            "message": "Order deactivated successfully.",
+            "data": {
+                "id": "cmom6hg0e000201nm7dcrkgel",
+                "active": false
+            }
+        }
+        ```
+      </Tab>
+      <Tab title="Activated response">
+        ```json
+        {
+            "statusCode": 200,
+            "success": true,
+            "status": "order_activated",
+            "message": "Order activated successfully.",
+            "data": {
+                "id": "cmom6hg0e000201nm7dcrkgel",
+                "active": true
+            }
+        }
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>

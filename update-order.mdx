@@ -1,0 +1,79 @@
+---
+title: "Update order"
+---
+
+You can update an order in a progressive and customizable way. Each parameter can be edited individually, without the need to send all parameters or compare them in order to make changes.
+
+```shellscript
+POST /order/cmokoxf8s000201qzvuoru686
+```
+
+<Steps>
+  <Step title="Updating an order">
+    Provide any parameter you wish to update; the response will return the updated state of your order.
+
+    ```shellscript expandable
+    curl --request PATCH \
+      --url https://api.starkfi.io/order/:order_id \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+      --data '{
+      "order_items": [
+        {
+          "name": "CAMISETA PRETA"
+        }
+      ]
+    }'
+    ```
+  </Step>
+  <Step title="Expected response">
+    ```json expandable
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "order_updated",
+        "message": "Order updated successfully.",
+        "data": {
+            "id": "cmom6hg0e000201nm7dcrkgel",
+            "order_items": [
+                {
+                    "name": "CAMISETA PRETA",
+                    "quantity": 1,
+                    "image_url": "https://example.com/produto.png",
+                    "description": "Descrição do produto"
+                }
+            ],
+            "tenant_id": "cmolrp85k0000nfy021fmzdai",
+            "split_payment_config": [
+                {
+                    "receiver_wallet": "0xWalletDoRecipient",
+                    "receiver_percent": 80
+                }
+            ],
+            "subscription_payment_config": null,
+            "from_currency_symbol": "BRL",
+            "amount_from": "150.00",
+            "to_currency_symbol": "USDT",
+            "to_chain": null,
+            "on_ramp": false,
+            "gateway_method": "direct",
+            "payment_method_allowed": {
+                "crypto": true,
+                "cardfiat": true,
+                "pixcrypto": true,
+                "cardcrypto": true
+            },
+            "executor_id": "api_transaction",
+            "active": true,
+            "payment_session_link": "https://app.starknode.io/sessions/payment?code=cmom6hg0e000201nm7dcrkgel",
+            "order_created_at": "2026-05-01T00:32:13.646Z",
+            "order_updated_at": "2026-05-01T00:42:20.818Z"
+        }
+    }
+    ```
+  </Step>
+</Steps>
+
+<Info>
+  To deactivate or activate an order, do not use the order update endpoint directly. Instead, use the specific _toggle_ endpoint designed for this purpose.
+</Info>

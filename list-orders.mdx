@@ -1,4 +1,166 @@
 ---
-title: 'List orders'
+title: "List order"
 ---
 
+Pegue suas ordens criadas nesse endpoint você pode capturar ordens unicas e uma lista composta por todas suas criações tenants
+
+<Steps>
+  <Step title="Getting multiples order">
+    Getting all orders
+
+    ```shellscript
+    GET /order/list
+    ```
+
+    ## Expected response
+
+    ```json expandable
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "orders_listed",
+        "message": "Orders listed successfully.",
+        "data": {
+            "orders": [
+                {
+                    "id": "cmoly2p17000101nm1vglh3u5",
+                    "order_items": [
+                        {
+                            "name": "Produto Teste",
+                            "quantity": 1,
+                            "image_url": "https://example.com/produto.png",
+                            "description": "Descrição do produto"
+                        }
+                    ],
+                    "tenant_id": "cmolrp85k0000nfy021fmzdai",
+                    "split_payment_config": [
+                        {
+                            "receiver_wallet": "0xWalletDoRecipient",
+                            "receiver_percent": 80
+                        }
+                    ],
+                    "subscription_payment_config": null,
+                    "from_currency_symbol": "BRL",
+                    "amount_from": "150.00",
+                    "to_currency_symbol": "USDT",
+                    "to_chain": null,
+                    "on_ramp": false,
+                    "gateway_method": "direct",
+                    "payment_method_allowed": {
+                        "crypto": true,
+                        "cardfiat": true,
+                        "pixcrypto": true,
+                        "cardcrypto": true
+                    },
+                    "executor_id": "api_transaction",
+                    "active": true,
+                    "payment_session_link": "https://app.starkfi.io/sessions/payment?code=cmoly2p17000101nm1vglh3u5",
+                    "order_created_at": "2026-04-30T20:36:48.571Z",
+                    "order_updated_at": "2026-04-30T20:36:48.577Z"
+                },
+                {
+                    "id": "cmoly2eqm000001nmn5v7e57h",
+                    "order_items": [
+                        {
+                            "name": "Produto Teste",
+                            "quantity": 1,
+                            "image_url": "https://example.com/produto.png",
+                            "description": "Descrição do produto"
+                        }
+                    ],
+                    "tenant_id": "cmolrp85k0000nfy021fmzdai",
+                    "split_payment_config": [
+                        {
+                            "receiver_wallet": "0xWalletDoRecipient",
+                            "receiver_percent": 80
+                        }
+                    ],
+                    "subscription_payment_config": null,
+                    "from_currency_symbol": "BRL",
+                    "amount_from": "150.00",
+                    "to_currency_symbol": "USDT",
+                    "to_chain": null,
+                    "on_ramp": false,
+                    "gateway_method": "direct",
+                    "payment_method_allowed": {
+                        "crypto": true,
+                        "cardfiat": true,
+                        "pixcrypto": true,
+                        "cardcrypto": true
+                    },
+                    "executor_id": "api_transaction",
+                    "active": true,
+                    "payment_session_link": "https://app.starkfi.io/sessions/payment?code=cmoly2eqm000001nmn5v7e57h",
+                    "order_created_at": "2026-04-30T20:36:35.230Z",
+                    "order_updated_at": "2026-04-30T20:36:35.246Z"
+                }
+            ],
+            "pagination": {
+                "total": 2,
+                "page": 1,
+                "limit": 20,
+                "total_pages": 1
+            }
+        }
+    }
+    ```
+  </Step>
+  <Step title="Getting order by ID">
+    ```shellscript
+    GET /order/list/:order_id
+    ```
+
+    ## Expected response
+
+    ```json expandable
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "order_found",
+        "message": "Order found successfully.",
+        "data": {
+            "id": "cmom6hg0e000201nm7dcrkgel",
+            "order_items": [
+                {
+                    "name": "Produto Teste",
+                    "quantity": 1,
+                    "image_url": "https://example.com/produto.png",
+                    "description": "Descrição do produto"
+                }
+            ],
+            "tenant_id": "cmolrp85k0000nfy021fmzdai",
+            "split_payment_config": [
+                {
+                    "receiver_wallet": "0xWalletDoRecipient",
+                    "receiver_percent": 80
+                }
+            ],
+            "subscription_payment_config": null,
+            "from_currency_symbol": "BRL",
+            "amount_from": "150.00",
+            "to_currency_symbol": "USDT",
+            "to_chain": null,
+            "on_ramp": false,
+            "gateway_method": "direct",
+            "payment_method_allowed": {
+                "crypto": true,
+                "cardfiat": true,
+                "pixcrypto": true,
+                "cardcrypto": true
+            },
+            "executor_id": "api_transaction",
+            "active": true,
+            "payment_session_link": "https://app.starknode.io/sessions/payment?code=cmom6hg0e000201nm7dcrkgel",
+            "order_created_at": "2026-05-01T00:32:13.646Z",
+            "order_updated_at": "2026-05-01T00:32:13.653Z"
+        }
+    }
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+  Predefined payment sessions are not currently enabled. This feature will be available in production soon. \
+  \
+  Ignore: `payment_session_link`
+</Warning>
