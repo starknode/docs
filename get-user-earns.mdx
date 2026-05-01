@@ -6,6 +6,10 @@ You can retrieve users’ earnings using various filters through query parameter
 
 For example: if a user invests through your platform using Kamino and also uses the same wallet on Kamino, we retrieve that balance and include it as part of the user’s total earnings, reducing inconsistencies and preventing calculation errors.
 
+```shellscript
+GET /yield/earnings
+```
+
 <Steps>
   <Step title="Getting user earns">
     Getting user earn with multiples query
@@ -107,3 +111,7 @@ For example: if a user invests through your platform using Kamino and also uses 
     </AccordionGroup>
   </Step>
 </Steps>
+
+<Info>
+  If a user does not have any internal operations recorded, it will not be possible to retrieve profits from external operations. Earnings are only calculated when the user has deposits associated with a position.
+</Info>
