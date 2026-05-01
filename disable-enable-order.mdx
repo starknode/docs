@@ -8,9 +8,9 @@ When an order is disabled, it can no longer be processed in our transaction syst
   <Step title="Disable or Enable order">
     Make one request to control the state
 
-    ```shellscript expandable
+    ```shellscript
     curl --request POST \
-      --url https://api.starkfi.io/payment/register/intents-create-order \
+      --url https://api.starkfi.io/order/:order_id/toggle \
       --header 'Content-Type: application/json' \
       --header 'x-api-key: <api_key>' \
     ```

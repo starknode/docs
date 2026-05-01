@@ -1,0 +1,109 @@
+---
+title: "Get user earns"
+---
+
+You can retrieve users’ earnings using various filters through query parameters in requests to our endpoint. Profit calculations may include small margins of error, as we rebalance based on the user’s external investments across other providers or investment platforms.
+
+For example: if a user invests through your platform using Kamino and also uses the same wallet on Kamino, we retrieve that balance and include it as part of the user’s total earnings, reducing inconsistencies and preventing calculation errors.
+
+<Steps>
+  <Step title="Getting user earns">
+    Getting user earn with multiples query
+
+    ### Request body
+
+    | Parameter | Type | Required | Description |
+    | :-- | :-- | :-- | :-- |
+    | `wallet` | string | ✅ | The user's wallet is required to redeem the balance. |
+    | `position` | string | ❌ | When the user creates an operation, they receive a position ID. |
+    | `asset` | string | ❌ | Like –– ( `USDC, EURC` ) |
+    | `chain_name` | string | ❌ | Like –– ( `solana, arbitrum, base` ) |
+    | `provider` | string | ❌ | A `provider` is a protocol in which the user invests—such as `Kamino`, `Jupiter`, etc. |
+
+    ```shellscript
+    curl --request GET \
+      --url https://api.starkfi.io/yield/earnings?wallet=FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+    ```
+  </Step>
+  <Step title="Expected response">
+    ```json expandable
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "get_earnings_position",
+        "message": "Get earnings wallet position",
+        "data": {
+    	"profits": [
+    		    {
+    		        "position_id": "random_id",
+    		        "strategy_name": "Kamino Yield Strategy",
+    		        "asset": "USDC",
+    		        "wallet": "7x9d...aBc1",
+    		        "chain_name": "solana",
+    		        "deposit_position": 1000.0,
+    		        "last_move_amount": 200.0,
+    		        "status": "active",
+    		        "position_on_protocol": 1150.75,
+    		        "delta_vs_tracked_position": 150.75,
+    		        "tracked_profit_current": 150.75,
+    		        "tracked_profit": 150.75,
+    		        "tracked_drawdown": 0.0,
+    		        "realizable_profit_on_full_withdraw": 150.75,
+    		        "realizable_profit_on_requested_withdraw": 75.37,
+    		        "requested_withdraw_amount": 500.0,
+    		        "needs_reconciliation": false,
+    		        "untracked_external_balance_estimate": 0.0,
+    		        "earnings_status": "ok",
+    		        "earnings_details": null,
+    		        "created_at": "2026-04-20T14:32:10.000Z",
+    		        "updated_at": "2026-04-30T10:15:45.000Z"
+    		    }
+    		]
+    	}
+    }
+    ```
+
+    <AccordionGroup>
+      <Accordion title="📈 Profits and variations">
+        - `tracked_profit`: Estimated profit based on the positive difference between the deposit and the current position.
+        - `tracked_profit_current`: Currently tracked profit.
+        - `tracked_drawdown`: Recorded loss when there is a decrease in value.
+        - `delta_vs_tracked_position`: Difference between the internal system and the external protocol.
+      </Accordion>
+
+      <Accordion title="💰 Investment metrics">
+        - `deposit_position`: Original deposited amount.
+        - `position_on_protocol`: Current value reported by the external protocol.
+        - `last_move_amount`: Last recorded movement amount.
+        - `status`: Current status of the position.
+      </Accordion>
+
+      <Accordion title="🧾 Position identification">
+        - `position_id`: Position ID in the system.
+        - `strategy_name`: Name of the strategy/protocol.
+        - `asset`: Token or asset of the position.
+        - `wallet`: Associated wallet.
+        - `chain_name`: Blockchain network used.
+      </Accordion>
+
+      <Accordion title="🌐 External reconciliation">
+        - `needs_reconciliation`: Indicates a discrepancy between the internal system and the external protocol.
+        - `untracked_external_balance_estimate`: Estimated untracked external balance.
+        - `realizable_profit_on_full_withdraw`: Profit realizable in case of a full withdrawal.
+        - `realizable_profit_on_requested_withdraw`: Profit proportional to the requested withdrawal amount.
+      </Accordion>
+
+      <Accordion title="💸 Requested withdrawal">
+        - `requested_withdraw_amount`: Amount requested by the user.
+        - `requested_withdraw_amount_clamped`: (internal) amount adjusted to the protocol’s limit.
+      </Accordion>
+
+      <Accordion title="⚠️ Calculation status">
+        - `earnings_status`: Indicates success (ok) or an error while retrieving the data.
+        - `earnings_details`: Error details (when available).
+      </Accordion>
+    </AccordionGroup>
+  </Step>
+</Steps>
