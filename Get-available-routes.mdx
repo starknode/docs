@@ -344,4 +344,118 @@ GET /yield/strategies
       </Accordion>
     </AccordionGroup>
   </Step>
+  <Step title="Get available route using a filter">
+    You can use a specific token symbol to filter the response. For example, by using **USDC**, you will retrieve all available strategies for that token.
+
+    ```shellscript
+    curl --request GET \
+      --url https://api.starkfi.io/yield/strategies/:asset_symbol \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+    ```
+
+    ```json expandable
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "get_yield_strategies_ok",
+        "message": "Yield strategies retrieved successfully",
+        "data": {
+            "strategies": [
+                {
+                    "strategy_id": "jupiter_lend:EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v:9BEcn9aPEmhSPbPQeFGjidRiEKki46fVQDyPpSQXPA2D",
+                    "provider": "jupiter_lend",
+                    "protocol_display_name": "Jupiter Lend",
+                    "product_type": "lending",
+                    "enabled": true,
+                    "token": {
+                        "symbol": "USDC",
+                        "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                        "decimals": 6
+                    },
+                    "apy": {
+                        "supply": {
+                            "percent": 3.06,
+                            "annualized": 0.030600000000000002
+                        },
+                        "total_with_rewards": {
+                            "percent": 4.16,
+                            "annualized": 0.0416
+                        },
+                        "rewards_only": {
+                            "percent": 1.1,
+                            "annualized": 0.011000000000000001
+                        },
+                        "borrow": null
+                    },
+                    "risk": {
+                        "max_ltv": null,
+                        "max_ltv_percent": null
+                    },
+                    "liquidity": {
+                        "tvl_usd": 424426041.26,
+                        "total_supply_usd": 424426041.26,
+                        "total_borrow_usd": null
+                    },
+                    "addresses": {
+                        "market_or_vault": "9BEcn9aPEmhSPbPQeFGjidRiEKki46fVQDyPpSQXPA2D",
+                        "reserve": null,
+                        "share_mint": "jlUSDC"
+                    }
+                },
+                {
+                    "strategy_id": "kamino:EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v:D6q6wuQSrifJKZYpR1M8R4YawnLDtDsMmWM1NbBmgJ59",
+                    "provider": "kamino",
+                    "protocol_display_name": "Kamino",
+                    "product_type": "lending",
+                    "enabled": true,
+                    "token": {
+                        "symbol": "USDC",
+                        "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                        "decimals": null
+                    },
+                    "apy": {
+                        "supply": {
+                            "percent": 3.3895,
+                            "annualized": 0.03389494280042804
+                        },
+                        "total_with_rewards": null,
+                        "rewards_only": null,
+                        "borrow": {
+                            "percent": 4.6422,
+                            "annualized": 0.04642212534874757
+                        }
+                    },
+                    "risk": {
+                        "max_ltv": 0.8,
+                        "max_ltv_percent": 80
+                    },
+                    "liquidity": {
+                        "tvl_usd": 166389339.94,
+                        "total_supply_usd": 166389339.94,
+                        "total_borrow_usd": 157756070.62
+                    },
+                    "addresses": {
+                        "market_or_vault": "7u3HeHxYDLhnCoErrtycNokbQYbWGzLs6JSDqGAv5PfF",
+                        "reserve": "D6q6wuQSrifJKZYpR1M8R4YawnLDtDsMmWM1NbBmgJ59",
+                        "share_mint": null
+                    }
+                }
+            ],
+            "sources": {
+                "jupiter_lend": {
+                    "ok": true,
+                    "message": "get_lending_markets_ok",
+                    "count": 3
+                },
+                "kamino": {
+                    "ok": true,
+                    "message": "vaults_retrieved_successfully",
+                    "count": 3
+                }
+            }
+        }
+    }
+    ```
+  </Step>
 </Steps>
