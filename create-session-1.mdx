@@ -1,0 +1,106 @@
+---
+title: "Create KYC session"
+api: "POST /api/kyc/create/{kyc_type}"
+description: "Create or resume a Didit verification session after the user email is verified."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkFi API key when required by your environment.
+</ParamField>
+
+<ParamField path="kyc_type" type="string" required>
+  Verification flow. Use **`verify_public_kyc`** for the public Didit integration.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  Same email used in prepare and OTP. Must be email-verified before this call succeeds.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request POST \
+  --url https://api.starkfi.io/api/kyc/create/verify_public_kyc \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{"email":"user@example.com"}'
+```
+
+```javascript Node.js
+const response = await fetch(
+  "https://api.starkfi.io/api/kyc/create/verify_public_kyc",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "<api_key>",
+    },
+    body: JSON.stringify({ email: "user@example.com" }),
+  }
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.starkfi.io/api/kyc/create/verify_public_kyc",
+    headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
+    json={"email": "user@example.com"},
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 201 - Success
+{
+  "statusCode": 201,
+  "success": true,
+  "status": "kyc_session_created",
+  "message": "KYC session created",
+  "data": {
+    "success": true,
+    "message": "didit_create_kyc_session",
+    "session": {
+      "session_id": "string",
+      "session_url": "https://..."
+    }
+  }
+}
+```
+
+```json 403 - Forbidden
+{
+  "statusCode": 403,
+  "success": false,
+  "status": "email_not_verified",
+  "message": "You must verify your email before starting KYC"
+}
+```
+
+```json 404 - Not Found
+{
+  "statusCode": 404,
+  "success": false,
+  "status": "method_not_found",
+  "message": "Method provided not found"
+}
+```
+
+```json 500 - Server Error
+{
+  "statusCode": 500,
+  "success": false,
+  "status": "server_failed",
+  "message": "Server failed on KYC"
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+  Payload returned by the KYC session builder. Commonly includes **`session`** with identifiers and a hosted **`session_url`** when a new flow is issued. Exact fields may vary when a session already exists or the user is already approved.
+</ResponseField>

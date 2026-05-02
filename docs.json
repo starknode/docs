@@ -110,6 +110,16 @@
               "broadcast",
               "earnings"
             ]
+          },
+          {
+            "group": "Kyc",
+            "pages": [
+              "prepare",
+              "send-email-otp",
+              "verify-email",
+              "create-session-1",
+              "get-status"
+            ]
           }
         ]
       }

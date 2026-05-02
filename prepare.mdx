@@ -1,0 +1,104 @@
+---
+title: "Prepare KYC"
+api: "POST /api/kyc/prepare"
+description: "Register an email to begin the KYC flow before OTP and Didit session creation."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkFi API key when required by your environment.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  End user email. Use the same value (lowercase recommended) for OTP and session calls.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request POST \
+  --url https://api.starkfi.io/api/kyc/prepare \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{"email":"user@example.com"}'
+```
+
+```javascript Node.js
+const response = await fetch("https://api.starkfi.io/api/kyc/prepare", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "<api_key>",
+  },
+  body: JSON.stringify({ email: "user@example.com" }),
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.starkfi.io/api/kyc/prepare",
+    headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
+    json={"email": "user@example.com"},
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 201 - Created
+{
+  "statusCode": 201,
+  "success": true,
+  "status": "user_prepared",
+  "message": "User prepared for KYC, please verify your email"
+}
+```
+
+```json 200 - Already registered
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "user_already_prepared",
+  "message": "User already prepared for KYC",
+  "data": {
+    "email_verified": false,
+    "kyc_approved": false,
+    "kyc_status": "pending"
+  }
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "missing_params",
+  "message": "email is required"
+}
+```
+
+```json 500 - Server Error
+{
+  "statusCode": 500,
+  "success": false,
+  "status": "server_failed",
+  "message": "Server failed on KYC prepare"
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data.email_verified" type="boolean">
+  Present on **200** `user_already_prepared` — whether email OTP was completed.
+</ResponseField>
+
+<ResponseField name="data.kyc_approved" type="boolean">
+  Present on **200** — whether KYC is approved.
+</ResponseField>
+
+<ResponseField name="data.kyc_status" type="string">
+  Present on **200** — stored KYC status for that email.
+</ResponseField>

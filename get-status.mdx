@@ -1,0 +1,121 @@
+---
+title: "Get KYC status"
+api: "GET /api/kyc/status"
+description: "Return verification status, session metadata, IP summaries, and blocklist signal for an email."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkFi API key when required by your environment.
+</ParamField>
+
+<ParamField query="email" type="string" required>
+  Email associated with the KYC session. Must match the address used in prepare and session creation.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request GET \
+  --url 'https://api.starkfi.io/api/kyc/status?email=user@example.com' \
+  --header 'x-api-key: <api_key>'
+```
+
+```javascript Node.js
+const params = new URLSearchParams({ email: "user@example.com" });
+const response = await fetch(
+  `https://api.starkfi.io/api/kyc/status?${params}`,
+  { headers: { "x-api-key": "<api_key>" } }
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.starkfi.io/api/kyc/status",
+    params={"email": "user@example.com"},
+    headers={"x-api-key": "<api_key>"},
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 - Success
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "kyc_status_retrieved",
+  "message": "KYC status retrieved",
+  "data": {
+    "status": "pending",
+    "approved": false,
+    "session_id": "string",
+    "session_status": "string",
+    "session_url": "https://...",
+    "ip_info": [],
+    "is_blocklisted": false
+  }
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "missing_params",
+  "message": "email is required"
+}
+```
+
+```json 404 - Not Found
+{
+  "statusCode": 404,
+  "success": false,
+  "status": "kyc_not_found",
+  "message": "User KYC not found"
+}
+```
+
+The `status` value matches the failure reason returned by the server (for example `kyc_not_found` when no session exists for that email).
+
+```json 500 - Server Error
+{
+  "statusCode": 500,
+  "success": false,
+  "status": "server_failed",
+  "message": "Server failed on KYC status"
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data.status" type="string" required>
+  Stored KYC status for the user.
+</ResponseField>
+
+<ResponseField name="data.approved" type="boolean" required>
+  Whether the user is approved.
+</ResponseField>
+
+<ResponseField name="data.session_id" type="string">
+  Current Didit session id when available.
+</ResponseField>
+
+<ResponseField name="data.session_status" type="string">
+  Session status from the provider.
+</ResponseField>
+
+<ResponseField name="data.session_url" type="string">
+  Hosted verification URL when available.
+</ResponseField>
+
+<ResponseField name="data.ip_info" type="array">
+  Deduplicated IP / device summaries (country, VPN/Tor, data center flags, etc.).
+</ResponseField>
+
+<ResponseField name="data.is_blocklisted" type="boolean">
+  `true` when document or liveness checks include a blocklisted match.
+</ResponseField>

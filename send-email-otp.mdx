@@ -1,0 +1,94 @@
+---
+title: "Send email OTP (KYC)"
+api: "POST /api/security/email/send-otp"
+description: "Send a one-time verification code to a whitelist email registered for KYC."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkFi API key when required by your environment.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  Email previously registered with `POST /api/kyc/prepare`. Lookup uses lowercase internally.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request POST \
+  --url https://api.starkfi.io/api/security/email/send-otp \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{"email":"user@example.com"}'
+```
+
+```javascript Node.js
+const response = await fetch("https://api.starkfi.io/api/security/email/send-otp", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "<api_key>",
+  },
+  body: JSON.stringify({ email: "user@example.com" }),
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.starkfi.io/api/security/email/send-otp",
+    headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
+    json={"email": "user@example.com"},
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 201 - Success
+{
+  "statusCode": 201,
+  "success": true,
+  "status": "otp_sent",
+  "message": "Verification code sent to your email"
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "missing_params",
+  "message": "email is required"
+}
+```
+
+```json 400 - Already verified
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "email_already_verified",
+  "message": "Email is already verified"
+}
+```
+
+```json 404 - Not Found
+{
+  "statusCode": 404,
+  "success": false,
+  "status": "user_not_found",
+  "message": "User not found in whitelist"
+}
+```
+
+```json 500 - Server Error
+{
+  "statusCode": 500,
+  "success": false,
+  "status": "server_error",
+  "message": "Server failed, try again later"
+}
+```
+</ResponseExample>

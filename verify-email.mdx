@@ -1,0 +1,125 @@
+---
+title: "Verify email OTP (KYC)"
+api: "POST /api/security/email/verify-otp"
+description: "Validate the email OTP so the user can create a KYC session."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkFi API key when required by your environment.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  Same email used for send OTP.
+</ParamField>
+
+<ParamField body="code" type="string" required>
+  One-time code received by the user.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request POST \
+  --url https://api.starkfi.io/api/security/email/verify-otp \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{"email":"user@example.com","code":"123456"}'
+```
+
+```javascript Node.js
+const response = await fetch("https://api.starkfi.io/api/security/email/verify-otp", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "<api_key>",
+  },
+  body: JSON.stringify({ email: "user@example.com", code: "123456" }),
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.starkfi.io/api/security/email/verify-otp",
+    headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
+    json={"email": "user@example.com", "code": "123456"},
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 - Success
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "email_verified",
+  "message": "Email verified successfully"
+}
+```
+
+```json 400 - Missing fields
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "missing_params",
+  "message": "email and code are required"
+}
+```
+
+```json 400 - Invalid code
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "otp_invalid",
+  "message": "Invalid code"
+}
+```
+
+```json 400 - Expired
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "otp_expired",
+  "message": "Code expired, please request a new one"
+}
+```
+
+```json 400 - Max attempts
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "otp_max_attempts",
+  "message": "Max attempts reached, please request a new code"
+}
+```
+
+```json 404 - Not Found
+{
+  "statusCode": 404,
+  "success": false,
+  "status": "user_not_found",
+  "message": "User not found in whitelist"
+}
+```
+
+```json 400 - Already verified
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "email_already_verified",
+  "message": "Email is already verified"
+}
+```
+
+```json 500 - Server Error
+{
+  "statusCode": 500,
+  "success": false,
+  "status": "server_error",
+  "message": "Server failed, try again later"
+}
+```
+</ResponseExample>
