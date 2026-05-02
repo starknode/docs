@@ -9,4 +9,125 @@ icon: "arrows-rotate"
 ## Building a rebalance operation
 
 ```http
-PATCH /api/yield/rebalance
+PATCH /yield/rebalance
+```
+
+<Steps>
+  <Step title="Building rebalance operation">
+    Building a rebalance operation
+
+    | Parameter | Type | Required | Description |
+    | :-- | :-- | :-- | :-- |
+    | `chain_name` | string | ✅ | Network where the position lives (e.g. `solana`). |
+    | `amount` | string | ✅ | Decimal amount to move (must be `> 0`, e.g. `"100.00"`). |
+    | `wallet` | string | ✅ | User’s wallet public key. |
+    | `asset` | string | ✅ | Token symbol (e.g. `USDC`). |
+    | `provider_out` | string |  | Protocol to **withdraw** from: `jupiter_lend` or `kamino`. |
+    | `provider_in` | string |  | Protocol to **deposit** into: `jupiter_lend` or `kamino`. |
+    | `provider` | string |  | When **both** sides are the same protocol, send only this field (withdraw \+ deposit use the same provider). |
+
+    <Info>
+      Either provider\_in and provider\_out, or a single provider (same protocol on both legs).
+    </Info>
+  </Step>
+  <Step title="Request example (cross-protocol)">
+    ```shellscript
+    curl --request PATCH \
+      --url https://api.starkfi.io/yield/rebalance \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+      --data '{
+        "chain_name": "solana",
+        "wallet": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+        "asset": "USDC",
+        "amount": "0.01",
+        "provider_out": "kamino",
+        "provider_in": "jupiter_lend"
+      }'
+    ```
+  </Step>
+  <Step title="Expected response">
+    The API returns the standard envelope. On success, `data` includes `position_out_id`, `position_in_id`, and `rebalance` (build result: `success`, `message`, and `details`).
+
+    ### **Single merged transaction**
+
+    When instructions fit in one Solana packet, `details.mode` is `single_transaction`.
+
+    ```json
+    {
+      "statusCode": 200,
+      "success": true,
+      "status": "rebalance_yield_strategy_ok",
+      "message": "Yield strategy rebalanced successfully",
+      "data": {
+        "position_out_id": "<uuid>",
+        "position_in_id": "<uuid>",
+        "rebalance": {
+          "success": true,
+          "message": "rebalance_yield_strategy_built",
+          "details": {
+            "mode": "single_transaction",
+            "transaction": "<base64_unsigned_versioned_tx>"
+          }
+        }
+      }
+    }
+    ```
+  </Step>
+  <Step title="Signing rebalance transactions">
+    Never broadcast with the wallet’s `sendTransaction` or an external RPC. Sign only, then submit through StarkFi’s **yield** broadcast API.
+
+    <CodeGroup>
+
+    ```typescript EVM expandable
+    import { Wallet } from "ethers";
+    
+    const privateKey = "SUA_PRIVATE_KEY_AQUI";
+    const wallet = new Wallet(privateKey);
+    
+    const tx = {
+      from:                 "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+      to:                   "0x23183C87c9c6668edf5974893905AF475c3664c9",
+      data:                 "0x40180def000000000000000000000000fd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb90000000000000000000000009b57847b69d0354837f7b723133b9dbcbefb4f9f000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000020000000000000000000000009b57847b69d0354837f7b723133b9dbcbefb4f9f0000000000000000000000001e659faad0181ab1a30891d99f69df115db77eef0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000e3220000000000000000000000000000000000000000000000000000000000000706",
+      value:                0n,
+      chainId:              42161,
+      gasLimit:             82499n,
+      maxPriorityFeePerGas: 0n,
+      maxFeePerGas:         52514800n,
+      nonce:                36,
+      type:                 2,
+    };
+    
+    const signedTx = await wallet.signTransaction(tx);
+    console.log("Transação assinada:", signedTx);
+    ```
+
+    ```typescript Solana expandable
+    import { Keypair, Transaction } from "@solana/web3.js";
+    import bs58 from "bs58";
+    
+    const privateKeyBase58 = "YOUR_PRIVATE_KEY_BASE58_HERE";
+    const keypair = Keypair.fromSecretKey(bs58.decode(privateKeyBase58));
+    
+    // Serialized tx (wire format base64) returned by API response
+    const wireBase64 = `AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAGCttm371bWToa9QKOXo5KlPPMPULltp5K1MsY2z3EYpYMIe`;
+    
+    // 1. Deserialize bytes
+    const txBytes = Buffer.from(wireBase64, "base64");
+    const tx = Transaction.from(txBytes);
+    
+    // 2. Sign (fills the empty signature slot with ed25519 signature)
+    tx.sign(keypair);
+    
+    // 3. Serialize back to base64 (now with signature)
+    const signedTx = tx.serialize().toString("base64");
+    console.log("Signed transaction:", signedTx);
+    ```
+
+    </CodeGroup>
+  </Step>
+</Steps>
+
+<Info>
+  You can now submit your signed transaction using our **broadcast** endpoint.
+</Info>
