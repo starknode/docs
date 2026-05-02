@@ -1,0 +1,161 @@
+---
+title: "Get rebalance opportunities"
+description: "Using this endpoint, you can retrieve rebalance opportunities for a given position. It returns all tokens that offer better yields across different protocols, based on a comparison of higher APY values.  The protocols used are considered highly trusted and belong to main markets, meaning all of them are audited and secure. Therefore, the purpose of rebalancing is not to find safer or more stable protocols, but rather to identify higher yield opportunities.  This endpoint can be used to build notifications or UX/UI features that alert users whose positions are underperforming, enabling them to rebalance their positions more efficiently. "
+---
+
+```shellscript
+GET /yield/rebalance-opportunities
+```
+
+<Steps>
+  <Step title="Getting rebalance opportunities">
+    Getting all rebalance opportunities
+
+    ```shellscript
+    curl --request GET \
+      --url https://api.starkfi.io/yield/rebalance-opportunities \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+    ```
+
+    #### Expected response
+
+    ```json expandable
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "get_rebalance_opportunities_ok",
+        "message": "Rebalance opportunities retrieved successfully",
+        "data": {
+            "opportunities": [
+                {
+                    "token": {
+                        "symbol": "SOL",
+                        "mint": "So11111111111111111111111111111111111111112"
+                    },
+                    "route_winner": "SOL-KAMINO > SOL-JUPITER",
+                    "winner": {
+                        "provider": "kamino",
+                        "protocol_display_name": "Kamino",
+                        "strategy_id": "kamino:So11111111111111111111111111111111111111112:d4A2prbA2whesmvHaL88BH6Ewn5N4bTSU2Ze8P6Bc4Q",
+                        "apy_percent": 5.1941
+                    },
+                    "alternatives": [
+                        {
+                            "provider": "jupiter_lend",
+                            "protocol_display_name": "Jupiter Lend",
+                            "strategy_id": "jupiter_lend:So11111111111111111111111111111111111111112:2uQsyo1fXXQkDtcpXnLofWy88PxcvnfH2L8FPSE62FVU",
+                            "apy_percent": 4
+                        }
+                    ],
+                    "apy_spread_percent": 1.19
+                },
+                {
+                    "token": {
+                        "symbol": "USDC",
+                        "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+                    },
+                    "route_winner": "USDC-JUPITER > USDC-KAMINO",
+                    "winner": {
+                        "provider": "jupiter_lend",
+                        "protocol_display_name": "Jupiter Lend",
+                        "strategy_id": "jupiter_lend:EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v:9BEcn9aPEmhSPbPQeFGjidRiEKki46fVQDyPpSQXPA2D",
+                        "apy_percent": 4.15
+                    },
+                    "alternatives": [
+                        {
+                            "provider": "kamino",
+                            "protocol_display_name": "Kamino",
+                            "strategy_id": "kamino:EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v:D6q6wuQSrifJKZYpR1M8R4YawnLDtDsMmWM1NbBmgJ59",
+                            "apy_percent": 3.3912
+                        }
+                    ],
+                    "apy_spread_percent": 0.76
+                }
+            ],
+            "sources": {
+                "jupiter_lend": {
+                    "ok": true,
+                    "message": "get_lending_markets_ok",
+                    "count": 3
+                },
+                "kamino": {
+                    "ok": true,
+                    "message": "vaults_retrieved_successfully",
+                    "count": 3
+                }
+            }
+        }
+    }
+    ```
+
+    <Info>
+      Use the returned data to identify and signal rebalance opportunities for users. This data can also be used to structure a rebalance operation and trigger our broadcast system, enabling automated execution or distribution of the operation.
+    </Info>
+  </Step>
+  <Step title="Getting rebalance opportunities">
+    Retrieving rebalance opportunities using filters
+
+    ```shellscript
+    curl --request GET \
+      --url https://api.starkfi.io/yield/rebalance-opportunities/:asset_symbol \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+    ```
+
+    #### Expected response
+
+    ```json expandable
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "get_rebalance_opportunity_by_symbol_ok",
+        "message": "Rebalance opportunity retrieved successfully",
+        "data": {
+            "opportunities": [
+                {
+                    "token": {
+                        "symbol": "USDC",
+                        "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+                    },
+                    "route_winner": "USDC-JUPITER > USDC-KAMINO",
+                    "winner": {
+                        "provider": "jupiter_lend",
+                        "protocol_display_name": "Jupiter Lend",
+                        "strategy_id": "jupiter_lend:EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v:9BEcn9aPEmhSPbPQeFGjidRiEKki46fVQDyPpSQXPA2D",
+                        "apy_percent": 4.15
+                    },
+                    "alternatives": [
+                        {
+                            "provider": "kamino",
+                            "protocol_display_name": "Kamino",
+                            "strategy_id": "kamino:EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v:D6q6wuQSrifJKZYpR1M8R4YawnLDtDsMmWM1NbBmgJ59",
+                            "apy_percent": 3.3912
+                        }
+                    ],
+                    "apy_spread_percent": 0.76
+                }
+            ],
+            "sources": {
+                "jupiter_lend": {
+                    "ok": true,
+                    "message": "get_lending_markets_ok",
+                    "count": 3
+                },
+                "kamino": {
+                    "ok": true,
+                    "message": "vaults_retrieved_successfully",
+                    "count": 3
+                }
+            }
+        }
+    }
+    ```
+
+    <Note>
+      The responses are multichain. In the rebalance operation creation endpoint, execution is fully abstracted: you do not need to handle swaps or bridges, as our system takes care of all the underlying details automatically.
+
+      Your only responsibility is to properly parameterize the operation and trigger the necessary broadcasts for execution.
+    </Note>
+  </Step>
+</Steps>

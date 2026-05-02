@@ -1,0 +1,123 @@
+---
+title: "Build withdraw operation"
+---
+
+After a user performs a deposit operation, they can withdraw their invested funds at any time. Fees are only charged on the earnings generated, based on the time the user remains in the protocol.
+
+```shellscript
+POST /yield/withdraw
+```
+
+<Steps>
+  <Step title="Building a withdraw operation">
+    #### Request body example
+
+    | Parameter | Type | Required | Description |
+    | :-- | :-- | :-- | :-- |
+    | `provider` | string | ✅ | The **provider** is the protocol where the user wants to withdraw their funds. (e.g. `jupiter_lend`) |
+    | `asset` | string | ✅ | The **asset symbol** is chosen by the user. |
+    | `wallet` | string | ✅ | User's wallet public address |
+    | `amount` | string | ✅ | The amount the user wants to withdraw (e.g. `100.00`) |
+    | `chain_name` | string | ✅ | The **chain** is the network where the user wants to withdraw their funds. |
+  </Step>
+  <Step title="Request example">
+    ```shellscript
+    curl --request POST \
+      --url https://api.starkfi.io/order/create \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+      --data '{
+      	"provider": "jupiter_lend",
+        "asset": "USDC",
+        "wallet": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+        "amount": "0.01",
+        "chain_name": "solana"
+    }'
+    ```
+  </Step>
+  <Step title="Expected response">
+    ```json
+    {
+        "statusCode": 200,
+        "success": true,
+        "status": "withdraw_yield_strategy_ok",
+        "message": "Yield strategy withdraw successfully",
+        "data": {
+          "position_id": "cmonlfpv0000301nmnizxwob4",
+    	  "fee_policy": {
+    	    "is_full_withdraw": true,
+    	    "has_tracked_profit": false,
+    	    "charged_fixed_no_profit_fee": true,
+    	    "charged_starkfi_fee_amount": 0.1,
+    	    "charged_whitelabel_fee_amount": 0.05
+    	  },
+          "transaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAgS22bfvVtZOhr1Ao5ejkqU88w9QuW2nkrUyxjbPcRilgwcj71J70/rvu0J/yTO1674UGxqeljWsbxMzyBLGGTIhSHv8RXo/oDIxDUXee+zF0aH8JxoGfVZG/MkrkRIFKnYRAnp8rwC8ekxRjtwZYsqePDt4B29OZXjYjrMeikbGqxl9d/9fISvdail973OoWIuKzq/h/xTqHG5CFYaOosb3gIRE+8/cf8FyV6ejOFzFvFRe8v54cSEIbvrhfgwTQQYeXyzPK1sDIBzsh2kxDdkBYXtOfawRnLIelHWBYy3JvqgC5ZIwUW4+UWatmCd5Vc8UzUhP8EscD1FvC2CJQgA1veA4oganO3BaPj9y3TzLqfiwk9dDCxaIuRcmdJ+MiQSCv4el+RWy7kuZColtQumOW/ySBZLynRpY6hFkqzWzMMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEcn8RD5rZyCj3b2Rq49ZiVsmScRvvn3bU9qhBHACBPVR6mnvvwFsKRZEO8A58f97e1/yRiQ5ahJERwinC6lqslJomRsm5Gr9y9W+wdHAcnDKneVfnQTMTEQq+wdbs8IgIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZxvp6877brTo9ZfNqq8l0MbG75MLS9uDkfKYCA0UvXWEK/huRLkhelf0V6yk33/xLN6MW0KY4Ev8Cukm0xsGNHgbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpgtJyjk/h0MsE3SufVrZlQCwvZ4LziCRh1dcUMqZxVrwBEBEAAgMPCwEGBQgMBwQJDREOChDyI8aJUuHythAnAAAAAAAA"
+        }
+    }
+    ```
+
+    <Note>
+      When a user initiates a withdrawal operation, we determine whether they are withdrawing their full position or performing a partial withdrawal. We then calculate the profit generated in order to apply the fee charge. 
+
+      In the `fee_policy` field, you can view the applied policy and the fee amount charged for the operation.
+    </Note>
+  </Step>
+  <Step title="Signing a operation transaction">
+    When performing an operation, it is essential to never send it directly using `sendTransaction` or any external broadcast method.
+
+    For the operation to succeed, it must only be signed and submitted through StarkFi’s internal broadcast system via our HTTP API.
+
+    <CodeGroup>
+
+    ```typescript EVM expandable
+    import { Wallet } from "ethers";
+    
+    const privateKey = "SUA_PRIVATE_KEY_AQUI";
+    const wallet = new Wallet(privateKey);
+    
+    const tx = {
+      from:                 "0x9b57847b69D0354837F7b723133B9dBCbefb4F9F",
+      to:                   "0x23183C87c9c6668edf5974893905AF475c3664c9",
+      data:                 "0x40180def000000000000000000000000fd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb90000000000000000000000009b57847b69d0354837f7b723133b9dbcbefb4f9f000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000020000000000000000000000009b57847b69d0354837f7b723133b9dbcbefb4f9f0000000000000000000000001e659faad0181ab1a30891d99f69df115db77eef0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000e3220000000000000000000000000000000000000000000000000000000000000706",
+      value:                0n,
+      chainId:              42161,
+      gasLimit:             82499n,
+      maxPriorityFeePerGas: 0n,
+      maxFeePerGas:         52514800n,
+      nonce:                36,
+      type:                 2,
+    };
+    
+    const signedTx = await wallet.signTransaction(tx);
+    console.log("Transação assinada:", signedTx);
+    ```
+
+    ```typescript Solana expandable
+    import { Keypair, Transaction } from "@solana/web3.js";
+    import bs58 from "bs58";
+    
+    const privateKeyBase58 = "YOUR_PRIVATE_KEY_BASE58_HERE";
+    const keypair = Keypair.fromSecretKey(bs58.decode(privateKeyBase58));
+    
+    // Serialized tx (wire format base64) returned by API response
+    const wireBase64 = `AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAGCttm371bWToa9QKOXo5KlPPMPULltp5K1MsY2z3EYpYMIe`;
+    
+    // 1. Deserialize bytes
+    const txBytes = Buffer.from(wireBase64, "base64");
+    const tx = Transaction.from(txBytes);
+    
+    // 2. Sign (fills the empty signature slot with ed25519 signature)
+    tx.sign(keypair);
+    
+    // 3. Serialize back to base64 (now with signature)
+    const signedTx = tx.serialize().toString("base64");
+    console.log("Signed transaction:", signedTx);
+    ```
+
+    </CodeGroup>
+  </Step>
+</Steps>
+
+<Info>
+  You can now submit your signed transaction using our **broadcast** endpoint.
+</Info>

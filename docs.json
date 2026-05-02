@@ -47,7 +47,11 @@
                 "group": "Yield",
                 "pages": [
                   "get-user-earns",
-                  "Get-available-routes"
+                  "Get-available-routes",
+                  "get-rebalance-oportunities",
+                  "build-deposit-operation",
+                  "build-withdraw-operation",
+                  "build-rebalance-operation"
                 ]
               }
             ]
