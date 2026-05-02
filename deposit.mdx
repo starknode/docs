@@ -1,0 +1,124 @@
+---
+title: "Build deposit (yield)"
+api: "POST /api/yield/deposit"
+description: "Create or update a pending deposit and return an unsigned Solana transaction (base64 wire)."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<ParamField body="provider" type="enum<string>" required>
+  `jupiter_lend` or `kamino`.
+</ParamField>
+
+<ParamField body="chain_name" type="string" required>
+  Enabled chain (validated server-side), e.g. `solana`.
+</ParamField>
+
+<ParamField body="asset" type="string" required>
+  Token symbol or mint accepted by the provider resolver.
+</ParamField>
+
+<ParamField body="wallet" type="string" required>
+  User Solana public key.
+</ParamField>
+
+<ParamField body="amount" type="string" required>
+  Decimal amount to deposit, e.g. `"10.0"`.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request POST \
+  --url https://api.starknode.io/api/yield/deposit \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{
+    "provider": "jupiter_lend",
+    "chain_name": "solana",
+    "asset": "USDC",
+    "wallet": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+    "amount": "10.0"
+  }'
+```
+
+```javascript Node.js
+const response = await fetch("https://api.starknode.io/api/yield/deposit", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "<api_key>",
+  },
+  body: JSON.stringify({
+    provider: "jupiter_lend",
+    chain_name: "solana",
+    asset: "USDC",
+    wallet: "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+    amount: "10.0",
+  }),
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.starknode.io/api/yield/deposit",
+    headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
+    json={
+        "provider": "jupiter_lend",
+        "chain_name": "solana",
+        "asset": "USDC",
+        "wallet": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+        "amount": "10.0",
+    },
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 - Success
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "deposit_yield_strategy_ok",
+  "message": "Yield strategy deposited successfully",
+  "data": {
+    "position_id": "clxxxxxxxxxxxxxxxxxxxxxxxx",
+    "transaction": "AQAAAAA..."
+  }
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "invalid_parameters",
+  "message": "chain_name \"unknown\" is not a valid or enabled chain"
+}
+```
+
+```json 500 - Server Error
+{
+  "statusCode": 500,
+  "success": false,
+  "status": "deposit_yield_strategy_failed",
+  "message": "..."
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data.position_id" type="string" required>
+  Snapshot id — use with [Broadcast](/api-reference/yield/broadcast) and `operation: "deposit"`.
+</ResponseField>
+
+<ResponseField name="data.transaction" type="string" required>
+  Base64-encoded **unsigned** Solana transaction wire.
+</ResponseField>

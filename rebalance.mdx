@@ -1,0 +1,163 @@
+---
+title: "Build rebalance (yield)"
+api: "PATCH /api/yield/rebalance"
+description: "Move principal between protocols (or same protocol) with one or two unsigned Solana transactions."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<ParamField body="chain_name" type="string" required>
+  Enabled chain, e.g. `solana`.
+</ParamField>
+
+<ParamField body="amount" type="string" required>
+  Must parse to a finite number greater than zero.
+</ParamField>
+
+<ParamField body="wallet" type="string">
+  User pubkey (or use `signer`).
+</ParamField>
+
+<ParamField body="signer" type="string">
+  Alias of `wallet`.
+</ParamField>
+
+<ParamField body="asset" type="string">
+  Token symbol (or use `symbol`, `token_mint`, `mint`).
+</ParamField>
+
+<ParamField body="symbol" type="string">
+  Alias of `asset`.
+</ParamField>
+
+<ParamField body="token_mint" type="string">
+  Alias of `asset`.
+</ParamField>
+
+<ParamField body="mint" type="string">
+  Alias of `asset`.
+</ParamField>
+
+<ParamField body="provider_out" type="enum<string>">
+  Withdraw leg: `jupiter_lend` or `kamino` (use with `provider_in`).
+</ParamField>
+
+<ParamField body="provider_in" type="enum<string>">
+  Deposit leg: `jupiter_lend` or `kamino` (use with `provider_out`).
+</ParamField>
+
+<ParamField body="provider" type="enum<string>">
+  When both legs use the **same** protocol, send only this field instead of `provider_in` / `provider_out`.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request PATCH \
+  --url https://api.starknode.io/api/yield/rebalance \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{
+    "chain_name": "solana",
+    "wallet": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+    "asset": "USDC",
+    "amount": "10.0",
+    "provider_out": "kamino",
+    "provider_in": "jupiter_lend"
+  }'
+```
+
+```javascript Node.js
+const response = await fetch("https://api.starknode.io/api/yield/rebalance", {
+  method: "PATCH",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "<api_key>",
+  },
+  body: JSON.stringify({
+    chain_name: "solana",
+    wallet: "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+    asset: "USDC",
+    amount: "10.0",
+    provider_out: "kamino",
+    provider_in: "jupiter_lend",
+  }),
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.patch(
+    "https://api.starknode.io/api/yield/rebalance",
+    headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
+    json={
+        "chain_name": "solana",
+        "wallet": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+        "asset": "USDC",
+        "amount": "10.0",
+        "provider_out": "kamino",
+        "provider_in": "jupiter_lend",
+    },
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 - Success
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "rebalance_yield_strategy_ok",
+  "message": "Yield strategy rebalanced successfully",
+  "data": {
+    "position_out_id": "clxxxxxxxxxxxxxxxxxxxxxxxx",
+    "position_in_id": "clyyyyyyyyyyyyyyyyyyyyyyyy",
+    "rebalance": {
+      "success": true,
+      "message": "rebalance_yield_strategy_built",
+      "details": {
+        "mode": "single_transaction",
+        "transaction": "AQAAAAA..."
+      }
+    }
+  }
+}
+```
+
+```json 404 - Not Found
+{
+  "statusCode": 404,
+  "success": false,
+  "status": "rebalance_position_out_not_found",
+  "message": "Source position not found for rebalance"
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "invalid_parameters",
+  "message": "informe provider ou provider_in + provider_out"
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data.position_out_id" type="string" required>
+  Source snapshot id for broadcast.
+</ResponseField>
+
+<ResponseField name="data.position_in_id" type="string" required>
+  Target snapshot id for broadcast.
+</ResponseField>
+
+<ResponseField name="data.rebalance" type="object" required>
+  Build result: `success`, `message`, and `details` with `mode` (`single_transaction` or `two_transaction`) and either `transaction` or `withdraw_transaction` + `deposit_transaction` (base64 unsigned wires).
+</ResponseField>

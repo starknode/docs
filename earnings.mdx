@@ -1,0 +1,97 @@
+---
+title: "Yield earnings and positions"
+api: "GET /api/yield/earnings"
+description: "List tracked positions with live protocol balance, profit estimates, and reconciliation flags."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<ParamField query="wallet" type="string">
+  Filters `wallet_manager` (recommended).
+</ParamField>
+
+<ParamField query="position" type="string">
+  Snapshot id filter.
+</ParamField>
+
+<ParamField query="asset" type="string">
+  `strategy_symbol` filter.
+</ParamField>
+
+<ParamField query="chain_name" type="string">
+  Chain filter.
+</ParamField>
+
+<ParamField query="provider" type="string">
+  `strategy_name` filter (`jupiter_lend`, `kamino`, etc.).
+</ParamField>
+
+<ParamField query="amount" type="string">
+  When set to a positive number, includes requested-withdraw profit estimates in each row.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request GET \
+  --url 'https://api.starknode.io/api/yield/earnings?wallet=FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm&chain_name=solana' \
+  --header 'x-api-key: <api_key>'
+```
+
+```javascript Node.js
+const params = new URLSearchParams({
+  wallet: "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+  chain_name: "solana",
+});
+const response = await fetch(
+  `https://api.starknode.io/api/yield/earnings?${params}`,
+  { headers: { "x-api-key": "<api_key>" } }
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.starknode.io/api/yield/earnings",
+    params={
+        "wallet": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+        "chain_name": "solana",
+    },
+    headers={"x-api-key": "<api_key>"},
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 - Success
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "get_earnings_position",
+  "message": "Get earnings wallet position",
+  "data": {
+    "profits": []
+  }
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "params_mismatch",
+  "message": "Get earnings params mismatch"
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data.profits" type="array" required>
+  One object per matching `snapshot_yield_operations` row, enriched with on-chain earnings and profit math.
+</ResponseField>

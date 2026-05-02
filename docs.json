@@ -86,6 +86,20 @@
               "update-order-1",
               "disable-enable-order-1"
             ]
+          },
+          {
+            "group": "Yield",
+            "pages": [
+              "list-strategies",
+              "get-strategy",
+              "l-ist",
+              "get",
+              "deposit",
+              "withdraw",
+              "rebalance",
+              "broadcast",
+              "earnings"
+            ]
           }
         ]
       }

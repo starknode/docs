@@ -1,0 +1,73 @@
+---
+title: "List yield strategies"
+api: "GET /yield/strategies"
+description: "Aggregated lending markets from Jupiter Lend and Kamino."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request GET \
+  --url https://api.starknode.io/api/yield/strategies \
+  --header 'x-api-key: <api_key>'
+```
+
+```javascript Node.js
+const response = await fetch("https://api.starknode.io/api/yield/strategies", {
+  headers: { "x-api-key": "<api_key>" },
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.starknode.io/api/yield/strategies",
+    headers={"x-api-key": "<api_key>"},
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 - Success
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "get_yield_strategies_ok",
+  "message": "Yield strategies retrieved successfully",
+  "data": {
+    "strategies": [],
+    "sources": {}
+  }
+}
+```
+
+```json 502 - Bad Gateway
+{
+  "statusCode": 502,
+  "success": false,
+  "status": "get_yield_strategies_failed",
+  "message": "Could not retrieve yield strategies from providers",
+  "data": {
+    "strategies": [],
+    "sources": {}
+  }
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data.strategies" type="array">
+  Normalized strategy rows from upstream providers.
+</ResponseField>
+
+<ResponseField name="data.sources" type="object">
+  Per-provider diagnostics.
+</ResponseField>

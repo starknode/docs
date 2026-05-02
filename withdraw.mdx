@@ -1,0 +1,135 @@
+---
+title: "Build withdraw (yield)"
+api: "POST /api/yield/withdraw"
+description: "Build an unsigned withdraw transaction with fee_policy metadata derived from tracked principal and on-chain earnings."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<ParamField body="provider" type="enum<string>" required>
+  `jupiter_lend` or `kamino`.
+</ParamField>
+
+<ParamField body="chain_name" type="string" required>
+  Enabled chain, e.g. `solana`.
+</ParamField>
+
+<ParamField body="asset" type="string" required>
+  Token symbol.
+</ParamField>
+
+<ParamField body="wallet" type="string" required>
+  User wallet public key.
+</ParamField>
+
+<ParamField body="amount" type="string" required>
+  Amount to withdraw (validated against tracked and protocol balance).
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request POST \
+  --url https://api.starknode.io/api/yield/withdraw \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{
+    "provider": "jupiter_lend",
+    "chain_name": "solana",
+    "asset": "USDC",
+    "wallet": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+    "amount": "5.0"
+  }'
+```
+
+```javascript Node.js
+const response = await fetch("https://api.starknode.io/api/yield/withdraw", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "<api_key>",
+  },
+  body: JSON.stringify({
+    provider: "jupiter_lend",
+    chain_name: "solana",
+    asset: "USDC",
+    wallet: "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+    amount: "5.0",
+  }),
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.starknode.io/api/yield/withdraw",
+    headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
+    json={
+        "provider": "jupiter_lend",
+        "chain_name": "solana",
+        "asset": "USDC",
+        "wallet": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+        "amount": "5.0",
+    },
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 - Success
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "withdraw_yield_strategy_ok",
+  "message": "Yield strategy withdrawn successfully",
+  "data": {
+    "position_id": "clxxxxxxxxxxxxxxxxxxxxxxxx",
+    "fee_policy": {
+      "is_full_withdraw": false,
+      "has_tracked_profit": true,
+      "charged_fixed_no_profit_fee": false,
+      "charged_starkfi_fee_amount": 0.01,
+      "charged_whitelabel_fee_amount": 0
+    },
+    "transaction": "AQAAAAA..."
+  }
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "invalid_withdraw_position",
+  "message": "Withdraw is only allowed when deposit position is greater than zero"
+}
+```
+
+```json 404 - Not Found
+{
+  "statusCode": 404,
+  "success": false,
+  "status": "withdraw_position_not_found",
+  "message": "Withdraw position not found"
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data.position_id" type="string" required>
+  Snapshot id for [Broadcast](/api-reference/yield/broadcast) with `operation: "withdraw"`.
+</ResponseField>
+
+<ResponseField name="data.fee_policy" type="object" required>
+  Fee application summary for this withdraw build.
+</ResponseField>
+
+<ResponseField name="data.transaction" type="string" required>
+  Base64 unsigned Solana wire.
+</ResponseField>

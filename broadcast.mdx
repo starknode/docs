@@ -1,0 +1,135 @@
+---
+title: "Broadcast yield operation"
+api: "POST /api/yield/broadcast"
+description: "Submit signed Solana transaction(s) for deposit, withdraw, or rebalance. StarkNode broadcasts and updates positions."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<ParamField body="operation" type="enum<string>" required>
+  `deposit`, `withdraw`, or `rebalance`.
+</ParamField>
+
+<ParamField body="op_signed" type="string" required>
+  Base64 signed Solana wire, or JSON array of two base64 strings for rebalance two-step mode. Deposit and withdraw: exactly **one** string. Rebalance: **one** string (merged) or **array of two** strings `[withdraw, deposit]`.
+</ParamField>
+
+<ParamField body="position_id" type="string">
+  Required for `deposit` and `withdraw` — id from the build response.
+</ParamField>
+
+<ParamField body="position_out" type="string">
+  Required for `rebalance` — `position_out_id` from rebalance build.
+</ParamField>
+
+<ParamField body="position_in" type="string">
+  Required for `rebalance` — `position_in_id` from rebalance build.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request POST \
+  --url https://api.starknode.io/api/yield/broadcast \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{
+    "operation": "deposit",
+    "position_id": "clxxxxxxxxxxxxxxxxxxxxxxxx",
+    "op_signed": "AQAAAAA..."
+  }'
+```
+
+```javascript Node.js
+const response = await fetch("https://api.starknode.io/api/yield/broadcast", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "<api_key>",
+  },
+  body: JSON.stringify({
+    operation: "deposit",
+    position_id: "clxxxxxxxxxxxxxxxxxxxxxxxx",
+    op_signed: "AQAAAAA...",
+  }),
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.starknode.io/api/yield/broadcast",
+    headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
+    json={
+        "operation": "deposit",
+        "position_id": "clxxxxxxxxxxxxxxxxxxxxxxxx",
+        "op_signed": "AQAAAAA...",
+    },
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 - Success (deposit)
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "broadcast_deposit_yield_strategy_ok",
+  "message": "Yield operation broadcasted and positions confirmed successfully",
+  "data": {
+    "status": 1,
+    "transactionHash": "5VERv8NMvzbJME...",
+    "position_in": {
+      "position_id": "clxxxxxxxxxxxxxxxxxxxxxxxx",
+      "strategy_name": "jupiter_lend",
+      "strategy_symbol": "USDC",
+      "wallet_manager": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
+      "deposit_position": 10,
+      "last_move_amount": 10,
+      "status": "confirmed_position"
+    }
+  }
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "invalid_parameters",
+  "message": "position_id is required for deposit/withdraw broadcast"
+}
+```
+
+```json 409 - Conflict
+{
+  "statusCode": 409,
+  "success": false,
+  "status": "solana_blockhash_expired",
+  "message": "solana_blockhash_expired"
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data.status" type="number">
+  Receipt-style status from broadcast (`1` when confirmed successful on Solana).
+</ResponseField>
+
+<ResponseField name="data.transactionHash" type="string">
+  On-chain signature or hash when available (deposit/withdraw; may be empty for some rebalance shapes).
+</ResponseField>
+
+<ResponseField name="data.position_in" type="object">
+  Present for deposit and rebalance confirmations.
+</ResponseField>
+
+<ResponseField name="data.position_out" type="object">
+  Present for withdraw and rebalance confirmations.
+</ResponseField>

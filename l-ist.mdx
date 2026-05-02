@@ -1,0 +1,74 @@
+---
+title: "List rebalance opportunities"
+api: "GET /api/yield/rebalance-opportunities"
+description: "Cross-protocol APY comparison to suggest better yield destinations."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request GET \
+  --url https://api.starknode.io/api/yield/rebalance-opportunities \
+  --header 'x-api-key: <api_key>'
+```
+
+```javascript Node.js
+const response = await fetch(
+  "https://api.starknode.io/api/yield/rebalance-opportunities",
+  { headers: { "x-api-key": "<api_key>" } }
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.starknode.io/api/yield/rebalance-opportunities",
+    headers={"x-api-key": "<api_key>"},
+)
+data = response.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 - Success
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "get_rebalance_opportunities_ok",
+  "message": "Rebalance opportunities retrieved successfully",
+  "data": {
+    "opportunities": [],
+    "sources": null
+  }
+}
+```
+
+```json 502 - Bad Gateway
+{
+  "statusCode": 502,
+  "success": false,
+  "status": "get_rebalance_opportunities_failed",
+  "message": "Could not compute rebalance opportunities",
+  "data": {
+    "opportunities": [],
+    "sources": null
+  }
+}
+```
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data.opportunities" type="array">
+  Opportunity rows derived from provider data.
+</ResponseField>
+
+<ResponseField name="data.sources" type="object">
+  Upstream diagnostics (may be `null`).
+</ResponseField>
