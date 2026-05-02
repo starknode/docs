@@ -1,0 +1,268 @@
+---
+title: "Create order"
+api: "POST /order/create"
+description: "Create a reusable payment order template for the authenticated tenant (maximum 20 orders)."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<ParamField body="executor_id" type="string" required>
+  Caller identifier for this template (e.g. `api_transaction`).
+</ParamField>
+
+<ParamField body="from_currency_symbol" type="string" required>
+  Source fiat symbol enabled for your account (validated server-side), e.g. `BRL`, `USD`.
+</ParamField>
+
+<ParamField body="amount_from" type="string" required>
+  Amount in the source currency (decimal string), e.g. `"100.00"`.
+</ParamField>
+
+<ParamField body="to_currency_symbol" type="string" required>
+  Destination crypto symbol, e.g. `USDT`, `USDC`.
+</ParamField>
+
+<ParamField body="on_ramp" type="boolean" required>
+  Whether this order represents an on-ramp flow.
+</ParamField>
+
+<ParamField body="gateway_method" type="enum<string>" required>
+  Processing mode: `direct` (one-off) or `subs` (subscription-capable template).
+</ParamField>
+
+<ParamField body="payment_method_allowed" type="object">
+  Optional flags; when provided, **at least one** must be `true`: `crypto`, `pixcrypto`, `cardcrypto`, `cardfiat`, `cryptofiat`.
+
+  <Expandable title="payment_method_allowed">
+    <ParamField body="crypto" type="boolean">
+      Crypto checkout enabled.
+    </ParamField>
+
+    <ParamField body="pixcrypto" type="boolean">
+      PIX → crypto enabled.
+    </ParamField>
+
+    <ParamField body="cardcrypto" type="boolean">
+      Card → crypto enabled.
+    </ParamField>
+
+    <ParamField body="cardfiat" type="boolean">
+      Card → fiat enabled.
+    </ParamField>
+
+    <ParamField body="cryptofiat" type="boolean">
+      Crypto → fiat enabled.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="order_items" type="array">
+  Optional line items.
+
+  <Expandable title="order_items[]">
+    <ParamField body="name" type="string" required>
+      Item name.
+    </ParamField>
+
+    <ParamField body="quantity" type="number" required>
+      Positive integer quantity.
+    </ParamField>
+
+    <ParamField body="description" type="string">
+      Optional description.
+    </ParamField>
+
+    <ParamField body="image_url" type="string">
+      Optional image URL.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="split_payment_config" type="array">
+  Optional split configuration.
+
+  <Expandable title="split_payment_config[]">
+    <ParamField body="receiver_wallet" type="string">
+      Wallet receiving a share.
+    </ParamField>
+
+    <ParamField body="receiver_percent" type="number">
+      Percentage 0–100.
+    </ParamField>
+
+    <ParamField body="recipient_id" type="string">
+      Optional Pagarme recipient id.
+    </ParamField>
+
+    <ParamField body="liable" type="boolean">
+      Split liability flag.
+    </ParamField>
+
+    <ParamField body="charge_processing_fee" type="boolean">
+      Charge processing fee on this leg.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="subscription_payment_config" type="object">
+  Optional subscription defaults.
+
+  <Expandable title="subscription_payment_config">
+    <ParamField body="plan_name" type="string" required>
+      Plan identifier.
+    </ParamField>
+
+    <ParamField body="interval" type="string" required>
+      `weekly`, `monthly`, or `yearly`.
+    </ParamField>
+
+    <ParamField body="next_payment_at" type="number">
+      Optional Unix timestamp for next charge.
+    </ParamField>
+
+    <ParamField body="charge" type="boolean">
+      Whether to charge immediately (default `false`).
+    </ParamField>
+
+    <ParamField body="retry_count" type="number">
+      Retry count (default `0`).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl --request POST \
+  --url https://api.starknode.io/order/create \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{
+    "executor_id": "api_transaction",
+    "from_currency_symbol": "BRL",
+    "amount_from": "100.00",
+    "to_currency_symbol": "USDT",
+    "on_ramp": false,
+    "gateway_method": "direct",
+    "payment_method_allowed": {
+      "crypto": true,
+      "pixcrypto": true
+    }
+  }'
+```
+
+```javascript Node.js
+const response = await fetch("https://api.starknode.io/api/order/create", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "<api_key>",
+  },
+  body: JSON.stringify({
+    executor_id: "api_transaction",
+    from_currency_symbol: "BRL",
+    amount_from: "100.00",
+    to_currency_symbol: "USDT",
+    on_ramp: false,
+    gateway_method: "direct",
+    payment_method_allowed: { crypto: true, pixcrypto: true },
+  }),
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.starknode.io/api/order/create",
+    headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
+    json={
+        "executor_id": "api_transaction",
+        "from_currency_symbol": "BRL",
+        "amount_from": "100.00",
+        "to_currency_symbol": "USDT",
+        "on_ramp": False,
+        "gateway_method": "direct",
+        "payment_method_allowed": {"crypto": True, "pixcrypto": True},
+    },
+)
+data = response.json()
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 - Success
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "order_created",
+  "message": "Order created successfully.",
+  "data": {
+    "order_id": "clxxxxxxxxxxxxxxxxxxxxxxxx"
+  }
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "invalid_parameters",
+  "message": "payment_method_allowed must enable at least one payment method"
+}
+```
+
+```json 401 - Unauthorized
+{
+  "statusCode": 401,
+  "success": false,
+  "status": "customer_not_logged",
+  "message": "Customer not logged in."
+}
+```
+
+```json 429 - Too Many Requests
+{
+  "statusCode": 429,
+  "success": false,
+  "status": "order_limit_reached",
+  "message": "Order limit of 20 reached for this account."
+}
+```
+
+</ResponseExample>
+
+### Response
+
+<ResponseField name="statusCode" type="number" required>
+  HTTP status mirrored in the body (`200` on success).
+</ResponseField>
+
+<ResponseField name="success" type="boolean" required>
+  Whether the request succeeded.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+  Machine-readable code, e.g. `order_created`.
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  Human-readable message.
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Present on success.
+
+  <Expandable title="data">
+    <ResponseField name="order_id" type="string" required>
+      CUID of the new `payment_orders` row. A `payment_session_link` is stored on the order by the server.
+    </ResponseField>
+  </Expandable>
+</ResponseField>

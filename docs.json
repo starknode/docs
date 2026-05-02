@@ -76,6 +76,16 @@
               "create-transaction-1",
               "broadcast-transaction"
             ]
+          },
+          {
+            "group": "Orders",
+            "pages": [
+              "create-order",
+              "list-orders-1",
+              "get-order",
+              "update-order-1",
+              "disable-enable-order-1"
+            ]
           }
         ]
       }

@@ -1,0 +1,131 @@
+---
+title: "Update order"
+api: "PATCH /order/{order_id}"
+description: "Partially update a payment order. Arrays merge by index; subscription_payment_config shallow-merges with the stored object."
+authMethod: "key"
+---
+
+<ParamField header="x-api-key" type="string" required placeholder="your-api-key">
+  Your StarkNode API key. You can find it in your [dashboard](https://app.starknode.io).
+</ParamField>
+
+<ParamField path="order_id" type="string" required>
+  Order CUID to update.
+</ParamField>
+
+<ParamField body="from_currency_symbol" type="string">
+  When present, must pass enabled-fiat validation.
+</ParamField>
+
+<ParamField body="amount_from" type="string">
+</ParamField>
+
+<ParamField body="to_currency_symbol" type="string">
+</ParamField>
+
+<ParamField body="on_ramp" type="boolean">
+</ParamField>
+
+<ParamField body="gateway_method" type="enum<string>">
+  `direct` or `subs`.
+</ParamField>
+
+<ParamField body="executor_id" type="string">
+</ParamField>
+
+<ParamField body="payment_method_allowed" type="object">
+  Same shape as create order; at least one `true` when the object is sent.
+</ParamField>
+
+<ParamField body="order_items" type="array">
+  Partial items merged **by index** with existing `order_items`.
+</ParamField>
+
+<ParamField body="split_payment_config" type="array">
+  Merged **by index** with existing split config.
+</ParamField>
+
+<ParamField body="subscription_payment_config" type="object">
+  Shallow-merged with the stored subscription object.
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl --request PATCH \
+  --url https://api.starknode.io/order/clxxxxxxxxxxxxxxxxxxxxxxxx \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api_key>' \
+  --data '{"amount_from": "150.00"}'
+```
+
+```javascript Node.js
+const orderId = "clxxxxxxxxxxxxxxxxxxxxxxxx";
+const response = await fetch(
+  `https://api.starknode.io/api/order/${orderId}`,
+  {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "<api_key>",
+    },
+    body: JSON.stringify({ amount_from: "150.00" }),
+  }
+);
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+order_id = "clxxxxxxxxxxxxxxxxxxxxxxxx"
+response = requests.patch(
+    f"https://api.starknode.io/api/order/{order_id}",
+    headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
+    json={"amount_from": "150.00"},
+)
+data = response.json()
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 - Success
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "order_updated",
+  "message": "Order updated successfully.",
+  "data": {
+    "id": "clxxxxxxxxxxxxxxxxxxxxxxxx",
+    "amount_from": "150.00"
+  }
+}
+```
+
+```json 400 - Bad Request
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "no_fields_to_update",
+  "message": "No fields provided to update."
+}
+```
+
+```json 404 - Not Found
+{
+  "statusCode": 404,
+  "success": false,
+  "status": "order_not_found",
+  "message": "Order not found."
+}
+```
+
+</ResponseExample>
+
+### Response
+
+<ResponseField name="data" type="object" required>
+  Full updated `payment_orders` row.
+</ResponseField>
