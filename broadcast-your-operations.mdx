@@ -7,7 +7,7 @@ title: "Broadcast your operations"
 ## Endpoint
 
 ```http
-POST /api/yield/broadcast
+POST /yield/broadcast
 ```
 
 <Steps>
@@ -29,7 +29,7 @@ POST /api/yield/broadcast
 
     ```shellscript
     curl --request POST \
-      --url https://api.starkfi.io/api/yield/broadcast \
+      --url https://api.starkfi.io/yield/broadcast \
       --header 'Content-Type: application/json' \
       --header 'x-api-key: <api_key>' \
       --data '{
@@ -70,7 +70,7 @@ POST /api/yield/broadcast
 
     ```shellscript
     curl --request POST \
-      --url https://api.starkfi.io/api/yield/broadcast \
+      --url https://api.starkfi.io/yield/broadcast \
       --header 'Content-Type: application/json' \
       --header 'x-api-key: <api_key>' \
       --data '{
@@ -111,7 +111,7 @@ POST /api/yield/broadcast
 
     ```shellscript
     curl --request POST \
-      --url https://api.starkfi.io/api/yield/broadcast \
+      --url https://api.starkfi.io/yield/broadcast \
       --header 'Content-Type: application/json' \
       --header 'x-api-key: <api_key>' \
       --data '{
@@ -124,7 +124,7 @@ POST /api/yield/broadcast
 
     ### **Success response (**`status `**in body)**
 
-    `broadcast_rebalance_yield_strategy_ok` 
+    `broadcast_rebalance_yield_strategy_ok`
 
     ```json expandable
     {
@@ -161,7 +161,7 @@ POST /api/yield/broadcast
 
 ## **Errors**
 
-| **HTTP** | **Typical** `status `**/ message** | **When it occurs** |
+| **HTTP** | **Typical**`status `**/ message** | **When it occurs** |
 | :-- | :-- | :-- |
 | `400` | `invalid_parameters` | Zod validation (e.g. missing `position_id`, wrong `op_signed` count, missing `position_in` / `position_out` for rebalance). |
 | `400` | `signed_transaction_missing` | No usable signed payload after normalization. |
@@ -182,5 +182,5 @@ Partial rebalance failure (withdraw broadcasted, deposit failed) may return `bro
 <Warning>
   **Relation to StarkPay** `POST /payment/execute/on-chain`
 
-  This `/api/yield/broadcast` endpoint is **only** for **yield** (lending) flows built via `/api/yield/*`. StarkPay card/PIX/crypto checkout continues to use `/api/payment/...` and `payment_id` — do not mix the two models.
+  This `/api/yield/broadcast` endpoint is **only** for **yield** (lending) flows built via `/api/yield/*`. StarkPay card/PIX/crypto checkout continues to use `/payment/...` and `payment_id` — do not mix the two models.
 </Warning>
