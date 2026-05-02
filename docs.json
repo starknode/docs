@@ -54,6 +54,16 @@
                   "build-rebalance-operation",
                   "broadcast-your-operations"
                 ]
+              },
+              {
+                "group": "Kyc",
+                "pages": [
+                  "getting-started",
+                  "untitled-page",
+                  "validate-email",
+                  "create-session",
+                  "getting-status"
+                ]
               }
             ]
           }

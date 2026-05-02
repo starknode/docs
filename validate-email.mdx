@@ -1,0 +1,158 @@
+---
+title: "Validate email"
+---
+
+After [Prepare](/guides/kyc/prepare), the user must **prove they own the email** before StarkFi allows a KYC session. This phase uses two calls: **send OTP** and **verify OTP**.
+
+<Info>
+  Always call **`POST /kyc/prepare`** for that email first. If the address is not registered for KYC, send OTP returns **404** `user_not_found`.
+</Info>
+
+---
+
+## 1. Send verification code
+
+```shellscript
+POST /security/email/send-otp
+```
+
+### Request
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `email` | string | Yes | Same address used in prepare. The service normalizes to **lowercase** for lookup. |
+
+### Example
+
+```shellscript
+curl --request POST \
+  --url https://api.starkfi.io/security/email/send-otp \
+  --header 'Content-Type: application/json' \
+  --data '{"email":"user@example.com"}'
+```
+
+### Responses (send OTP)
+
+**201 — code sent**
+
+```json
+{
+  "statusCode": 201,
+  "success": true,
+  "status": "otp_sent",
+  "message": "Verification code sent to your email"
+}
+```
+
+**400 — missing email**
+
+`status`: `missing_params` — `"email is required"`
+
+**400 — already verified**
+
+`status`: `email_already_verified` — `"Email is already verified"`
+
+**404 — not registered for KYC**
+
+`status`: `user_not_found` — `"User not found in whitelist"`
+
+**500 — server error**
+
+`status`: `server_error` — `"Server failed, try again later"`
+
+---
+
+## 2. Confirm the code
+
+```shellscript
+POST /security/email/verify-otp
+```
+
+### Request
+
+```http
+POST /security/email/verify-otp
+Content-Type: application/json
+```
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `email` | string | Yes | Same email as send OTP. |
+| `code` | string | Yes | One-time code from the user’s inbox. |
+
+### Example
+
+```shellscript
+curl --request POST \
+  --url https://api.starkfi.io/security/email/verify-otp \
+  --header 'Content-Type: application/json' \
+  --data '{"email":"user@example.com","code":"123456"}'
+```
+
+### Responses (verify OTP)
+
+**200 — verified**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "email_verified",
+  "message": "Email verified successfully"
+}
+```
+
+After this response, you can start the Didit session with `POST /kyc/create/verify_public_kyc`.
+
+**400 — missing fields**
+
+`status`: `missing_params` — `"email and code are required"`
+
+**400 — invalid or unusable code**
+
+`status` is one of: `otp_invalid`, `otp_expired`, `otp_max_attempts`\
+Human-readable `message`, for example:
+
+- `Invalid code`
+- `Code expired, please request a new one`
+- `Max attempts reached, please request a new code`
+
+**400 — already verified**
+
+`status`: `email_already_verified`
+
+**404 — not registered**
+
+`status`: `user_not_found`
+
+**500 — server error**
+
+`status`: `server_error`
+
+---
+
+## Flow in your product
+
+<Steps>
+  <Step title="User requests a code">
+    Call **send-otp** after prepare. Show a “check your inbox” state; do not log the OTP in client analytics.
+  </Step>
+  <Step title="User enters the code">
+    Call **verify-otp** with `email` \+ `code`. On success, move to the KYC session step.
+  </Step>
+  <Step title="Retries">
+    If you receive `otp_expired` or `otp_max_attempts`, call **send-otp** again to issue a fresh code (subject to your product rules and abuse limits).
+  </Step>
+</Steps>
+
+<Note>
+  Email subject and template are controlled by StarkFi. If deliverability is an issue, work with **StarkFi support** for domain and inbox guidance.
+</Note>
+
+---
+
+## Related
+
+- Previous: [Prepare](/guides/kyc/prepare)
+- Overview: [Getting started](/guides/kyc/part-1-getting-started)
+- Next: start KYC session — `POST /kyc/create/verify_public_kyc` (dedicated guide can follow)

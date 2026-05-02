@@ -1,0 +1,128 @@
+---
+title: "Prepare"
+---
+
+The **prepare** step is the first API call in the KYC sequence. It tells StarkFi which email will go through verification and ensures the address is known before you send a one-time code or open a Didit session.
+
+<Info>
+  Call **prepare once per user** (or before OTP) when they choose to start KYC. If the email is already registered, the API returns **200** with the current high-level state so you can skip duplicate setup or resume the flow.
+</Info>
+
+---
+
+## Endpoint
+
+```shellscript
+POST /kyc/prepare
+```
+
+### Body
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `email` | string | Yes | End user's email address. Use the **same** value (we recommend **lowercase**) for OTP, session creation, and status checks. |
+
+<Note>
+  After prepare, continue with **email verification** (`POST /security/email/send-otp` → `POST /security/email/verify-otp`) before starting the Didit session. See [Getting started](/guides/kyc/part-1-getting-started) for the full flow.
+</Note>
+
+---
+
+## Examples
+
+```shellscript
+curl --request POST \
+  --url https://api.starkfi.io/api/kyc/prepare \
+  --header 'Content-Type: application/json' \
+  --data '{"email":"user@example.com"}'
+```
+
+```javascript
+const res = await fetch("https://api.starkfi.io/api/kyc/prepare", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email: "user@example.com" }),
+});
+const json = await res.json();
+```
+
+```python
+import requests
+
+r = requests.post(
+    "https://api.starkfi.io/api/kyc/prepare",
+    json={"email": "user@example.com"},
+)
+data = r.json()
+```
+
+---
+
+## Responses
+
+### 201 — New registration
+
+The email was registered for KYC. Ask the user to complete **email verification** next.
+
+```json
+{
+  "statusCode": 201,
+  "success": true,
+  "status": "user_prepared",
+  "message": "User prepared for KYC, please verify your email"
+}
+```
+
+### 200 — Already registered
+
+The email was already known to StarkFi for KYC. Use `data` to drive your UI (for example skip prepare or show the right next step).
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "user_already_prepared",
+  "message": "User already prepared for KYC",
+  "data": {
+    "email_verified": false,
+    "kyc_approved": false,
+    "kyc_status": "pending"
+  }
+}
+```
+
+| Field in `data` | Meaning |
+| --- | --- |
+| `email_verified` | Whether the user has completed the email OTP step |
+| `kyc_approved` | Whether KYC has been approved |
+| `kyc_status` | Current KYC status string for that email |
+
+### 400 — Missing email
+
+```json
+{
+  "statusCode": 400,
+  "success": false,
+  "status": "missing_params",
+  "message": "email is required"
+}
+```
+
+### 500 — Server error
+
+```json
+{
+  "statusCode": 500,
+  "success": false,
+  "status": "server_failed",
+  "message": "Server failed on KYC prepare"
+}
+```
+
+---
+
+## What to do next
+
+1. **Send OTP** — `POST /security/email/send-otp` with the same `email`.
+2. **Verify OTP** — `POST /security/email/verify-otp` with `email` and `code`.
+3. **Start KYC session** — `POST /kyc/create/verify_public_kyc` (after the email is verified).

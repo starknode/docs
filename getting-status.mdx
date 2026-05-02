@@ -1,0 +1,108 @@
+---
+title: "Getting status"
+---
+
+Use **get status** to drive loading states in your app, refresh after the user returns from the hosted flow, or periodically poll until verification reaches a final outcome.
+
+<Info>
+  The user must already have a **KYC session** associated with that email (after [Create KYC session](/guides/kyc/create-session)). If there is no session yet, you will receive a **404** response.
+</Info>
+
+---
+
+## Endpoint
+
+```shellscript
+GET /kyc/status?email=
+```
+
+<Note>
+  Paths in this guide use the **`/kyc`** prefix only. If your environment uses an extra prefix (for example `/api`), prepend it when building the request URL.
+</Note>
+
+---
+
+## Request
+
+```http
+GET /kyc/status?email=user@example.com
+```
+
+### Query
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `email` | string | Yes | Same email used across prepare, OTP, and session creation. |
+
+### Example
+
+```shellscript
+curl --request GET \
+  --url 'https://api.starkfi.io/kyc/status?email=user@example.com'
+```
+
+---
+
+## Responses
+
+### 200 — Status retrieved
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "status": "kyc_status_retrieved",
+  "message": "KYC status retrieved",
+  "data": {
+    "status": "pending",
+    "approved": false,
+    "session_id": "string",
+    "session_status": "string",
+    "session_url": "https://...",
+    "ip_info": [
+      {
+        "ip_address": "string",
+        "ip_country": "string",
+        "ip_state": "string",
+        "ip_city": "string",
+        "platform": "string",
+        "device_brand": "string",
+        "device_model": "string",
+        "is_vpn_or_tor": false,
+        "is_data_center": false
+      }
+    ],
+    "is_blocklisted": false
+  }
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `status` | Overall KYC status stored for that user |
+| `approved` | Whether the user is approved for KYC |
+| `session_id` | Current verification session identifier |
+| `session_status` | Status reported for the session |
+| `session_url` | Hosted flow URL when available |
+| `ip_info` | Summarized IP / device context (deduplicated by IP) |
+| `is_blocklisted` | Whether blocklist signals were raised in document or liveness checks |
+
+### 400 — Missing email
+
+`status`: `missing_params` — `"email is required"`
+
+### 404 — No session or not found
+
+The `status` and `message` fields reflect the reason (for example no KYC session exists for that email). The response body may include a `details` field with more context.
+
+### 500 — Server error
+
+`status`: `server_failed` — `"Server failed on KYC status"`
+
+---
+
+## Related
+
+- [Create KYC session](/guides/kyc/create-session)
+- [Verify email](/guides/kyc/verify-email)
+- [Getting started](/guides/kyc/part-1-getting-started)

@@ -1,0 +1,90 @@
+---
+title: "Create session"
+---
+
+Use this step once the address has passed [**Verify email**](/guides/kyc/verify-email). StarkFi returns session details you use to send the user to the hosted KYC experience.
+
+<Info>
+  Prerequisite: [**Prepare**](/guides/kyc/prepare) and successful **email OTP**. If the email is not verified yet, the API responds with **403** `email_not_verified`.
+</Info>
+
+---
+
+## Endpoint
+
+```shellscript
+POST /kyc/create/verify_public_kyc
+```
+
+<Note>
+  Paths in this guide use the **`/kyc`** prefix only. If your environment serves these routes behind another prefix (for example `/api`), prepend it to the path your client calls.
+</Note>
+
+---
+
+## Request body
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `email` | string | Yes | Same email used in prepare and OTP. Must already be email‑verified. |
+
+### Example
+
+```shellscript
+curl --request POST \
+  --url https://api.starkfi.io/kyc/create/verify_public_kyc \
+  --header 'Content-Type: application/json' \
+  --data '{"email":"user@example.com"}'
+```
+
+---
+
+## Responses
+
+### 201 — Session created or returned
+
+```json
+{
+  "statusCode": 201,
+  "success": true,
+  "status": "kyc_session_created",
+  "message": "KYC session created",
+  "data": {
+    "success": true,
+    "message": "didit_create_kyc_session",
+    "session": {
+      "session_id": "string",
+      "session_url": "https://..."
+    }
+  }
+}
+```
+
+The exact shape of `data` and `session` can vary (for example when a session already exists or the user is already approved). Your integration should read **`session_url`** (or equivalent) when you need to open the hosted flow, and **`session_id`** when you need to correlate later status checks.
+
+### 403 — Email not verified
+
+```json
+{
+  "statusCode": 403,
+  "success": false,
+  "status": "email_not_verified",
+  "message": "You must verify your email before starting KYC"
+}
+```
+
+### 404 — Unsupported path
+
+`status`: `method_not_found` — the `kyc_type` in the URL is not supported.
+
+### 500 — Server error
+
+`status`: `server_failed` — `"Server failed on KYC"`
+
+---
+
+## Related
+
+- [Verify email](/guides/kyc/verify-email)
+- [Get KYC status](/guides/kyc/get-status)
+- [Getting started](/guides/kyc/part-1-getting-started)

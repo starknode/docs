@@ -1,0 +1,146 @@
+---
+title: "Getting started"
+---
+
+<Info>
+  Treat StarkFi **KYC as a managed service**: we run verification sessions and decisions on **Didit**, a leading global provider for identity and compliance. You do not need a separate contract, certification path, or second vendor integration for end users who onboard through StarkFi.
+</Info>
+
+<Steps>
+  <Step title="How StarkFi KYC works (Didit)">
+    Identity verification is powered by **Didit**, with strong coverage for document checks, **liveness**, **screening**, and fraud signals. Instead of wiring your product directly to Didit dashboards, API keys, and workflows, **StarkFi exposes a single API** for starting sessions, tracking progress, and receiving outcomes.
+
+    That shortens **time to market**, reduces implementation risk, and keeps day‑to‑day compliance operations on our side: you integrate **one** StarkFi surface and monitor status inside the StarkFi ecosystem.
+  </Step>
+  <Step title="One integration, fewer vendors">
+    Using **KYC through StarkFi** means you are not juggling a second identity vendor, long‑term SDK upgrades, or parallel commercial agreements for the same user journey.
+
+    Your team focuses on the product experience—start verification, open the hosted flow, show status to the user—while verification logic and the decision trail stay with **StarkFi and Didit**.
+  </Step>
+  <Step title="Shared verification across StarkFi — cost awareness">
+    When someone has **already completed verification elsewhere on StarkFi**, that identity can be **recognized across the network**. You are not charged again for a full verification cycle for users who are already approved in the ecosystem.
+
+    At scale, that can mean **meaningful monthly savings** as your user base grows and more people reuse an existing, high‑quality verification instead of starting from zero every time.
+
+    <Note>
+      Exact reuse rules (for example how a user is matched) and how that maps to your **commercial plan** depend on StarkFi policy and your agreement. Contact **StarkFi support** or your **account manager** for the pricing and eligibility details that apply to your organization.
+    </Note>
+  </Step>
+  <Step title="What this guide covers next">
+    After this overview, the **integration sequence** is: register the user’s email for KYC, confirm the email with a **one‑time code**, **start the Didit session**, then **poll status** until the user finishes or leaves the hosted flow.
+
+    ```shellscript
+    POST /kyc/prepare
+    POST /security/email/send-otp
+    POST /security/email/verify-otp
+    POST /kyc/create/verify_public_kyc
+    GET  /kyc/status?email=
+    ```
+
+    ## API sequence
+
+    | Step | Method and path | Purpose |
+    | --- | --- | --- |
+    | 1 | `POST /kyc/prepare` | Register the user’s email for KYC (new users start as not email‑verified) |
+    | 2a | `POST /security/email/send-otp` | Send the email verification code |
+    | 2b | `POST /security/email/verify-otp` | Confirm the code so the email is verified |
+    | 3 | `POST /kyc/create/verify_public_kyc` | Create or resume the Didit session (requires verified email) |
+    | 4 | `GET /kyc/status?email=` | Read session status, session URL, high‑level risk signals, and blocklist hints |
+
+    <Note>
+      Use the **same email address** in every step. We recommend **lowercase** addresses for consistency.
+    </Note>
+  </Step>
+  <Step title="Example — register for KYC">
+    ```shellscript
+    curl --request POST \
+      --url https://api.starkfi.io/kyc/prepare \
+      --header 'Content-Type: application/json' \
+      --data '{"email":"user@example.com"}'
+    ```
+  </Step>
+  <Step title="Typical responses (register)">
+    **201 — ready for email verification**
+
+    ```json
+    {
+      "statusCode": 201,
+      "success": true,
+      "status": "user_prepared",
+      "message": "User prepared for KYC, please verify your email"
+    }
+    ```
+
+    **200 — email was already registered for KYC**
+
+    ```json
+    {
+      "statusCode": 200,
+      "success": true,
+      "status": "user_already_prepared",
+      "message": "User already prepared for KYC",
+      "data": {
+        "email_verified": false,
+        "kyc_approved": false,
+        "kyc_status": "pending"
+      }
+    }
+    ```
+  </Step>
+</Steps>
+
+---
+
+## Prerequisites
+
+- A valid end‑user email you control for testing and production.
+- A way to open **HTTPS** (browser or in‑app web view) when StarkFi returns a hosted Didit URL.
+- Outbound email delivery for OTP codes enabled for your StarkFi environment.
+
+---
+
+## Email OTP and Didit session (summary)
+
+### Send OTP
+
+```shellscript
+POST /security/email/send-otp
+```
+
+Body: `{ "email": "user@example.com" }` — **201** `otp_sent` when the address is already registered for KYC (step 1).
+
+### Verify OTP
+
+```shellscript
+POST /security/email/verify-otp
+```
+
+Body: `{ "email": "user@example.com", "code": "123456" }` — **200** `email_verified` on success.
+
+### Start public KYC session
+
+```shellscript
+POST /kyc/create/verify_public_kyc
+```
+
+Body: `{ "email": "user@example.com" }` — **403** `email_not_verified` if the email has not been confirmed yet.
+
+### Check status
+
+```shellscript
+GET /kyc/status?email=user@example.com
+```
+
+On success, the payload includes high‑level fields such as approval state, session identifiers, a session URL when available, summarized IP context, and a **blocklist** indicator derived from the verification outcome.
+
+---
+
+## Common issues
+
+| What you see | What to check |
+| --- | --- |
+| `403 email_not_verified` | Complete email OTP before starting the KYC session. |
+| `404 user_not_found` on OTP | Call `POST /api/kyc/prepare` first for that email. |
+| `404 method_not_found` | Use the path segment **`verify_public_kyc`** exactly as shown. |
+
+---
