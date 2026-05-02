@@ -1,6 +1,6 @@
 ---
 title: "Build deposit (yield)"
-api: "POST /api/yield/deposit"
+api: "POST /yield/deposit"
 description: "Create or update a pending deposit and return an unsigned Solana transaction (base64 wire)."
 authMethod: "key"
 ---
@@ -46,7 +46,7 @@ curl --request POST \
 ```
 
 ```javascript Node.js
-const response = await fetch("https://api.starknode.io/api/yield/deposit", {
+const response = await fetch("https://api.starknode.io/yield/deposit", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -67,7 +67,7 @@ const data = await response.json();
 import requests
 
 response = requests.post(
-    "https://api.starknode.io/api/yield/deposit",
+    "https://api.starknode.io/yield/deposit",
     headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
     json={
         "provider": "jupiter_lend",

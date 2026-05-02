@@ -1,6 +1,6 @@
 ---
 title: "Yield earnings and positions"
-api: "GET /api/yield/earnings"
+api: "GET /yield/earnings"
 description: "List tracked positions with live protocol balance, profit estimates, and reconciliation flags."
 authMethod: "key"
 ---
@@ -47,7 +47,7 @@ const params = new URLSearchParams({
   chain_name: "solana",
 });
 const response = await fetch(
-  `https://api.starknode.io/api/yield/earnings?${params}`,
+  `https://api.starknode.io/yield/earnings?${params}`,
   { headers: { "x-api-key": "<api_key>" } }
 );
 const data = await response.json();
@@ -57,7 +57,7 @@ const data = await response.json();
 import requests
 
 response = requests.get(
-    "https://api.starknode.io/api/yield/earnings",
+    "https://api.starknode.io/yield/earnings",
     params={
         "wallet": "FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm",
         "chain_name": "solana",

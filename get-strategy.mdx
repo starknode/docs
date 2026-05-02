@@ -1,6 +1,6 @@
 ---
 title: "Get yield strategies by symbol"
-api: "GET /api/yield/strategies/{symbol}"
+api: "GET /yield/strategies/{symbol}"
 description: "Filter aggregated strategies for a single token symbol (case-insensitive)."
 authMethod: "key"
 ---
@@ -22,7 +22,7 @@ curl --request GET \
 ```
 
 ```javascript Node.js
-const response = await fetch("https://api.starknode.io/api/yield/strategies/USDC", {
+const response = await fetch("https://api.starknode.io/yield/strategies/USDC", {
   headers: { "x-api-key": "<api_key>" },
 });
 const data = await response.json();
@@ -32,7 +32,7 @@ const data = await response.json();
 import requests
 
 response = requests.get(
-    "https://api.starknode.io/api/yield/strategies/USDC",
+    "https://api.starknode.io/yield/strategies/USDC",
     headers={"x-api-key": "<api_key>"},
 )
 data = response.json()

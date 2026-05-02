@@ -1,6 +1,6 @@
 ---
 title: "Build withdraw (yield)"
-api: "POST /api/yield/withdraw"
+api: "POST /yield/withdraw"
 description: "Build an unsigned withdraw transaction with fee_policy metadata derived from tracked principal and on-chain earnings."
 authMethod: "key"
 ---
@@ -46,7 +46,7 @@ curl --request POST \
 ```
 
 ```javascript Node.js
-const response = await fetch("https://api.starknode.io/api/yield/withdraw", {
+const response = await fetch("https://api.starknode.io/yield/withdraw", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -67,7 +67,7 @@ const data = await response.json();
 import requests
 
 response = requests.post(
-    "https://api.starknode.io/api/yield/withdraw",
+    "https://api.starknode.io/yield/withdraw",
     headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
     json={
         "provider": "jupiter_lend",

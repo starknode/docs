@@ -1,6 +1,6 @@
 ---
 title: "Broadcast yield operation"
-api: "POST /api/yield/broadcast"
+api: "POST /yield/broadcast"
 description: "Submit signed Solana transaction(s) for deposit, withdraw, or rebalance. StarkNode broadcasts and updates positions."
 authMethod: "key"
 ---
@@ -44,7 +44,7 @@ curl --request POST \
 ```
 
 ```javascript Node.js
-const response = await fetch("https://api.starknode.io/api/yield/broadcast", {
+const response = await fetch("https://api.starknode.io/yield/broadcast", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const data = await response.json();
 import requests
 
 response = requests.post(
-    "https://api.starknode.io/api/yield/broadcast",
+    "https://api.starknode.io/yield/broadcast",
     headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
     json={
         "operation": "deposit",

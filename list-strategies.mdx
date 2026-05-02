@@ -18,7 +18,7 @@ curl --request GET \
 ```
 
 ```javascript Node.js
-const response = await fetch("https://api.starknode.io/api/yield/strategies", {
+const response = await fetch("https://api.starknode.io/yield/strategies", {
   headers: { "x-api-key": "<api_key>" },
 });
 const data = await response.json();
@@ -28,7 +28,7 @@ const data = await response.json();
 import requests
 
 response = requests.get(
-    "https://api.starknode.io/api/yield/strategies",
+    "https://api.starknode.io/yield/strategies",
     headers={"x-api-key": "<api_key>"},
 )
 data = response.json()

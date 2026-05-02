@@ -1,6 +1,6 @@
 ---
 title: "Build rebalance (yield)"
-api: "PATCH /api/yield/rebalance"
+api: "PATCH /yield/rebalance"
 description: "Move principal between protocols (or same protocol) with one or two unsigned Solana transactions."
 authMethod: "key"
 ---
@@ -71,7 +71,7 @@ curl --request PATCH \
 ```
 
 ```javascript Node.js
-const response = await fetch("https://api.starknode.io/api/yield/rebalance", {
+const response = await fetch("https://api.starknode.io/yield/rebalance", {
   method: "PATCH",
   headers: {
     "Content-Type": "application/json",
@@ -93,7 +93,7 @@ const data = await response.json();
 import requests
 
 response = requests.patch(
-    "https://api.starknode.io/api/yield/rebalance",
+    "https://api.starknode.io/yield/rebalance",
     headers={"Content-Type": "application/json", "x-api-key": "<api_key>"},
     json={
         "chain_name": "solana",
