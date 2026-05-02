@@ -54,9 +54,10 @@ authMethod: "key"
 </ParamField>
 
 <RequestExample>
+
 ```bash cURL
 curl --request PATCH \
-  --url https://api.starknode.io/api/yield/rebalance \
+  --url https://api.starknode.io/yield/rebalance \
   --header 'Content-Type: application/json' \
   --header 'x-api-key: <api_key>' \
   --data '{
@@ -105,9 +106,11 @@ response = requests.patch(
 )
 data = response.json()
 ```
+
 </RequestExample>
 
 <ResponseExample>
+
 ```json 200 - Success
 {
   "statusCode": 200,
@@ -146,6 +149,7 @@ data = response.json()
   "message": "informe provider ou provider_in + provider_out"
 }
 ```
+
 </ResponseExample>
 
 ### Response
@@ -159,5 +163,5 @@ data = response.json()
 </ResponseField>
 
 <ResponseField name="data.rebalance" type="object" required>
-  Build result: `success`, `message`, and `details` with `mode` (`single_transaction` or `two_transaction`) and either `transaction` or `withdraw_transaction` + `deposit_transaction` (base64 unsigned wires).
+  Build result: `success`, `message`, and `details` with `mode` (`single_transaction` or `two_transaction`) and either `transaction` or `withdraw_transaction` \+ `deposit_transaction` (base64 unsigned wires).
 </ResponseField>

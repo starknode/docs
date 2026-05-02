@@ -14,9 +14,10 @@ authMethod: "key"
 </ParamField>
 
 <RequestExample>
+
 ```bash cURL
 curl --request GET \
-  --url https://api.starknode.io/api/yield/rebalance-opportunities/USDC \
+  --url https://api.starknode.io/yield/rebalance-opportunities/USDC \
   --header 'x-api-key: <api_key>'
 ```
 
@@ -37,9 +38,11 @@ response = requests.get(
 )
 data = response.json()
 ```
+
 </RequestExample>
 
 <ResponseExample>
+
 ```json 200 - Success
 {
   "statusCode": 200,
@@ -61,6 +64,7 @@ data = response.json()
   "message": "Rebalance opportunity not found"
 }
 ```
+
 </ResponseExample>
 
 ### Response
@@ -69,4 +73,5 @@ data = response.json()
   Filtered list for the symbol.
 </ResponseField>
 
-<ResponseField name="data.sources" type="object" />
+<ResponseField name="data.sources" type="object">
+</ResponseField>

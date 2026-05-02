@@ -10,9 +10,10 @@ authMethod: "key"
 </ParamField>
 
 <RequestExample>
+
 ```bash cURL
 curl --request GET \
-  --url https://api.starknode.io/api/yield/strategies \
+  --url https://api.starknode.io/yield/strategies \
   --header 'x-api-key: <api_key>'
 ```
 
@@ -32,9 +33,11 @@ response = requests.get(
 )
 data = response.json()
 ```
+
 </RequestExample>
 
 <ResponseExample>
+
 ```json 200 - Success
 {
   "statusCode": 200,
@@ -60,6 +63,7 @@ data = response.json()
   }
 }
 ```
+
 </ResponseExample>
 
 ### Response

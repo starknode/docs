@@ -30,9 +30,10 @@ authMethod: "key"
 </ParamField>
 
 <RequestExample>
+
 ```bash cURL
 curl --request POST \
-  --url https://api.starknode.io/api/yield/withdraw \
+  --url https://api.starknode.io/yield/withdraw \
   --header 'Content-Type: application/json' \
   --header 'x-api-key: <api_key>' \
   --data '{
@@ -78,9 +79,11 @@ response = requests.post(
 )
 data = response.json()
 ```
+
 </RequestExample>
 
 <ResponseExample>
+
 ```json 200 - Success
 {
   "statusCode": 200,
@@ -118,6 +121,7 @@ data = response.json()
   "message": "Withdraw position not found"
 }
 ```
+
 </ResponseExample>
 
 ### Response

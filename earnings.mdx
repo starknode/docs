@@ -34,9 +34,10 @@ authMethod: "key"
 </ParamField>
 
 <RequestExample>
+
 ```bash cURL
 curl --request GET \
-  --url 'https://api.starknode.io/api/yield/earnings?wallet=FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm&chain_name=solana' \
+  --url 'https://api.starknode.io/yield/earnings?wallet=FmTGYpzX27fDqaiytXUdFVaphC5o68G61Q3uhVM2d8bm&chain_name=solana' \
   --header 'x-api-key: <api_key>'
 ```
 
@@ -65,9 +66,11 @@ response = requests.get(
 )
 data = response.json()
 ```
+
 </RequestExample>
 
 <ResponseExample>
+
 ```json 200 - Success
 {
   "statusCode": 200,
@@ -88,6 +91,7 @@ data = response.json()
   "message": "Get earnings params mismatch"
 }
 ```
+
 </ResponseExample>
 
 ### Response
