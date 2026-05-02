@@ -1,7 +1,6 @@
 ---
 title: "Build rebalance operation"
 description: "Move funds between yield providers (or refresh the same protocol) using unsigned Solana transactions and StarkFi broadcast."
-icon: "arrows-rotate"
 ---
 
 > To move a user’s invested balance from one protocol to another (or to rebuild the operation on the same protocol), create a **rebalance** operation with the endpoint below. You must execute it through **our yield broadcast endpoint** — do not broadcast with `sendTransaction` or a third-party RPC. The user only signs; your backend submits the signed payload to StarkFi.
