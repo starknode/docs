@@ -146,8 +146,5 @@
     "default": "dark",
     "strict": true
   },
-  "banner": {
-    "dismissible": false
-  },
   "logo": "/images/lOGO(3).png"
 }
