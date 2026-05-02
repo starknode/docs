@@ -1,0 +1,186 @@
+---
+title: "Broadcast your operations"
+---
+
+> After you build a **deposit**, **withdraw**, or **rebalance** operation and the user signs the wire (base64), you must submit the signed payload **only** through this endpoint. Do not call `sendTransaction` or public RPC broadcast yourself — StarkFi confirms the transaction and updates the tracked positions in one flow.
+
+## Endpoint
+
+```http
+POST /api/yield/broadcast
+```
+
+<Steps>
+  <Step title="Broadcast all operations">
+    ### Request body (all operations)
+
+    | Parameter | Type | Required | Description |
+    | :-- | :-- | :-- | :-- |
+    | `operation` | string | ✅ | One of: `deposit`, `withdraw`, `rebalance`. |
+    | `op_signed` | string \| string\[\] | ✅ | Base64 **signed** Solana transaction wire. **Deposit** and **withdraw**: exactly **one** string. **Rebalance**: one string (merged tx) **or** an array of **two** strings `[withdraw, deposit]` when the build returned two transactions. |
+    | `position_id` | string |  | Position UUID returned when **building** deposit or withdraw. \*Required when `operation` is `deposit` or `withdraw`. |
+    | `position_in` | string |  | Target position UUID for rebalance (deposit leg). \*\*Required when `operation` is `rebalance`. |
+    | `position_out` | string |  | Source position UUID for rebalance (withdraw leg). \*\*Required when `operation` is `rebalance`. |
+
+    `position_id` / `position_in` / `position_out` must belong to the **same tenant** as the authenticated session or integration `x-api-key`.
+  </Step>
+  <Step title="Broadcast deposit">
+    Use the `position_id` from `POST /api/yield/deposit`.
+
+    ```shellscript
+    curl --request POST \
+      --url https://api.starkfi.io/api/yield/broadcast \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+      --data '{
+        "operation": "deposit",
+        "position_id": "<position_id_from_build>",
+        "op_signed": "<base64_signed_transaction>"
+      }'
+    ```
+
+    ### **Success response (**`status `**in body)**
+
+    `broadcast_deposit_yield_strategy_ok`
+
+    ```json expandable
+    {
+      "statusCode": 200,
+      "success": true,
+      "status": "broadcast_deposit_yield_strategy_ok",
+      "message": "Yield operation broadcasted and positions confirmed successfully",
+      "data": {
+        "status": 1,
+        "transactionHash": "<solana_signature>",
+        "position_in": {
+          "position_id": "<uuid>",
+          "strategy_name": "jupiter_lend",
+          "strategy_symbol": "USDC",
+          "wallet_manager": "<pubkey>",
+          "deposit_position": 100.5,
+          "last_move_amount": 100.5,
+          "status": "confirmed_position"
+        }
+      }
+    }
+    ```
+  </Step>
+  <Step title="Broadcast withdraw">
+    Use the `position_id` from `POST /api/yield/withdraw`.
+
+    ```shellscript
+    curl --request POST \
+      --url https://api.starkfi.io/api/yield/broadcast \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+      --data '{
+        "operation": "withdraw",
+        "position_id": "<position_id_from_build>",
+        "op_signed": "<base64_signed_transaction>"
+      }'
+    ```
+
+    ### **Success response (**`status `**in body)**
+
+    `broadcast_withdraw_yield_strategy_ok`
+
+    ```json expandable
+    {
+      "statusCode": 200,
+      "success": true,
+      "status": "broadcast_withdraw_yield_strategy_ok",
+      "message": "Yield operation broadcasted and positions confirmed successfully",
+      "data": {
+        "status": 1,
+        "transactionHash": "<solana_signature>",
+        "position_out": {
+          "position_id": "<uuid>",
+          "strategy_name": "jupiter_lend",
+          "strategy_symbol": "USDC",
+          "wallet_manager": "<pubkey>",
+          "deposit_position": 0,
+          "last_move_amount": 50,
+          "status": "confirmed_position"
+        }
+      }
+    }
+    ```
+  </Step>
+  <Step title="Broadcast rebalance">
+    Use `position_out_id` and `position_in_id` from `PATCH /api/yield/rebalance`.
+
+    ```shellscript
+    curl --request POST \
+      --url https://api.starkfi.io/api/yield/broadcast \
+      --header 'Content-Type: application/json' \
+      --header 'x-api-key: <api_key>' \
+      --data '{
+        "operation": "rebalance",
+        "position_out": "<position_out_id>",
+        "position_in": "<position_in_id>",
+        "op_signed": "<base64_signed_merged_tx>"
+      }'
+    ```
+
+    ### **Success response (**`status `**in body)**
+
+    `broadcast_rebalance_yield_strategy_ok` 
+
+    ```json expandable
+    {
+      "statusCode": 200,
+      "success": true,
+      "status": "broadcast_rebalance_yield_strategy_ok",
+      "message": "Yield operation broadcasted and positions confirmed successfully",
+      "data": {
+        "status": 1,
+        "transactionHash": "<solana_signature_or_null>",
+        "position_out": {
+          "position_id": "<uuid>",
+          "strategy_name": "kamino",
+          "strategy_symbol": "USDC",
+          "wallet_manager": "<pubkey>",
+          "deposit_position": 0,
+          "last_move_amount": 10,
+          "status": "confirmed_position"
+        },
+        "position_in": {
+          "position_id": "<uuid>",
+          "strategy_name": "jupiter_lend",
+          "strategy_symbol": "USDC",
+          "wallet_manager": "<pubkey>",
+          "deposit_position": 10,
+          "last_move_amount": 10,
+          "status": "confirmed_position"
+        }
+      }
+    }
+    ```
+  </Step>
+</Steps>
+
+## **Errors**
+
+| **HTTP** | **Typical** `status `**/ message** | **When it occurs** |
+| :-- | :-- | :-- |
+| `400` | `invalid_parameters` | Zod validation (e.g. missing `position_id`, wrong `op_signed` count, missing `position_in` / `position_out` for rebalance). |
+| `400` | `signed_transaction_missing` | No usable signed payload after normalization. |
+| `400` | `operation_not_supported` | `operation` not in `deposit` \| `withdraw` \| `rebalance`. |
+| `404` | `deposit_position_not_found` | `position_id` missing or not owned by tenant (deposit). |
+| `404` | `withdraw_position_not_found` | Same for withdraw. |
+| `404` | `rebalance_position_out_not_found` / `rebalance_position_in_not_found` | Invalid or foreign `position_out` / `position_in`. |
+| `409` | `solana_blockhash_expired` | Signed wire no longer valid for current blockhash — rebuild the unsigned operation and sign again. |
+| `409` | `yield_kind_operation_mismatch` | Position `status` does not match the pending operation (e.g. stale rebalance). Server may refresh pending fields; **rebuild** the operation before broadcasting again. |
+| `504` | `broadcast_confirmation_timeout` | Submitted but not confirmed within the internal timeout — check the signature on a Solana explorer before retrying. |
+| `502` | `broadcast_*` / `confirm_*` | Broadcast or post-broadcast confirmation failed (see `details` in error body). |
+| `500` | `server_error` | Unhandled exception in the controller. |
+
+Partial rebalance failure (withdraw broadcasted, deposit failed) may return `broadcast_rebalance_deposit_yield_strategy_failed` with structured `details` (withdraw receipt \+ deposit error \+ `position_out` snapshot). Treat as a **support / recovery** path, not a silent retry without checking chain state.
+
+---
+
+<Warning>
+  **Relation to StarkPay** `POST /payment/execute/on-chain`
+
+  This `/api/yield/broadcast` endpoint is **only** for **yield** (lending) flows built via `/api/yield/*`. StarkPay card/PIX/crypto checkout continues to use `/api/payment/...` and `payment_id` — do not mix the two models.
+</Warning>

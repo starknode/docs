@@ -51,7 +51,8 @@
                   "get-rebalance-oportunities",
                   "build-deposit-operation",
                   "build-withdraw-operation",
-                  "build-rebalance-operation"
+                  "build-rebalance-operation",
+                  "broadcast-your-operations"
                 ]
               }
             ]
