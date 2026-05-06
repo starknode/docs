@@ -7,7 +7,7 @@
     "light": "#fefe1c",
     "dark": "#fefe1c"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.ico",
   "navigation": {
     "tabs": [
       {
